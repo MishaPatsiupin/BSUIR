@@ -61,15 +61,7 @@ void swap(int **arr, int dest, int src){
     arr[src] = temp;
 }
 
-void sort(int **arr, int rows, int cols) {
-    for (int i = 0; i < rows - 1; ++i) {
-        int sum1 = sum_even(arr, i, cols);
-        int sum2 = sum_even(arr, i + 1, cols);
-        if (sum1 > sum2){
-            swap(arr, i, i + 1);
-        }
-    }
-}
+
 int* array_characteristic(int **arr, int rows, int cols) {
     int *characteristic = (int *) malloc(rows * sizeof(int));
     for (int i = 0; i < rows; i++) {
@@ -78,43 +70,33 @@ int* array_characteristic(int **arr, int rows, int cols) {
     return characteristic;
 }
 
-
-
-
-void merge_sort(int **arr, int i, int j, int *a, int *aux) {
-    if (j <= i) {
-        return;
-    }
-    int mid = (i + j) / 2;
-
-    merge_sort(arr, i, mid, a, aux);
-    merge_sort(arr, mid+ 1, j, a, aux);
-
-    int pointer_left = i;
-    int pointer_right = mid + 1;
-    int k;
-
-    for (k = i; k <= j; k++) {
-        if (pointer_left == mid + 1) {      // left pointer has reached the limit
-            aux[k] = a[pointer_right];
-            swap(arr, k, pointer_right);
-            pointer_right++;
-        } else if (pointer_right == j + 1) {        // right pointer has reached the limit
-            aux[k] = a[pointer_left];
-            swap(arr, k, pointer_right);
-            pointer_left++;
-        } else if (a[pointer_left] < a[pointer_right]) {        // pointer left points to smaller element
-            aux[k] = a[pointer_left];
-            swap(arr, k, pointer_right);
-            pointer_left++;
-        } else {        // pointer right points to smaller element
-            aux[k] = a[pointer_right];
-            swap(arr, k, pointer_right);
-            pointer_right++;
+void merge_sort(int **mas, int *arr, int l, int r){
+    if (l == r) return; // границы сомкнулись
+    int mid = (l + r) / 2; // определяем середину последовательности
+    // и рекурсивно вызываем функцию сортировки для каждой половины
+    merge_sort(mas, arr, l, mid);
+    merge_sort(mas, arr, mid + 1, r);
+    int i = l;  // начало первого пути
+    int j = mid + 1; // начало второго пути
+    int *tmp = (int*)malloc(r * sizeof(int)); // дополнительный массив
+    for (int step = 0; step < r - l + 1; step++){ // для всех элементов дополнительного массива{
+        // записываем в формируемую последовательность меньший из элементов двух путей
+        // или остаток первого пути если j > r
+        if ((j > r) || ((i <= mid) && (arr[i] < arr[j]))){
+            tmp[step] = arr[i];
+            swap(mas, step, i);
+            i++;
+        }
+        else{
+            tmp[step] = arr[j];
+            swap(mas, step, i);
+            j++;
         }
     }
-
-    for (k = i; k <= j; k++) {      // copy the elements from aux[] to a[]
-        a[k] = aux[k];
+    // переписываем сформированную последовательность в исходный массив
+    for (int step = 0; step < r - l + 1; step++) {
+        arr[l + step] = tmp[step];
+        swap(mas, l + step, step);
     }
 }
+
