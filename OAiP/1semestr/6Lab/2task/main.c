@@ -11,22 +11,21 @@ srand(time(NULL));
     printMatrix(arr, rows, cols);
 
     int *characteristic =  array_characteristic(arr, rows, cols);
-    int *characteristic2 = array_characteristic(arr, rows, cols);
+    printf("\n");
 for (int i = 0; i < rows; i++)
     printf("%5d", characteristic[i]);
+    printf("\n");
 
-   // merge_sort(arr, 0, rows - 1, characteristic, characteristic2);
-
-    sort(arr, rows, cols);
+    merge_sort(arr, characteristic, 0, rows - 1);
     printf("\n\nNew matrix -> \n");
     printMatrix(arr, rows, cols);
 
-//    printf("\n\nNew matrix -> \n");
-//    for (int i = 0; i < rows; i++)
-//        printf("%5d", characteristic[i]);
-//    printf("\n\nNew matrix -> \n");
-//    for (int i = 0; i < rows; i++)
-//        printf("%5d", characteristic2[i]);
+    printf("\n");
+    for (int i = 0; i < rows; i++)
+        printf("%5d", characteristic[i]);
+    printf("\n");
+
     free(arr);
 return 0;
 }
+
