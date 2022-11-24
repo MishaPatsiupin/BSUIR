@@ -55,14 +55,14 @@ int sum_even(int **arr, int row, int cols) {
     return temp_sum;
 }
 
-void swap(int **arr, int dest, int src){
+void swap(int **arr, int dest, int src) {
     int *temp = arr[dest];
     arr[dest] = arr[src];
     arr[src] = temp;
 }
 
 
-int* array_characteristic(int **arr, int rows, int cols) {
+int *array_characteristic(int **arr, int rows, int cols) {
     int *characteristic = (int *) malloc(rows * sizeof(int));
     for (int i = 0; i < rows; i++) {
         characteristic[i] = sum_even(arr, i, cols);
@@ -70,33 +70,31 @@ int* array_characteristic(int **arr, int rows, int cols) {
     return characteristic;
 }
 
-void merge_sort(int **mas, int *arr, int l, int r){
-    if (l == r) return; // границы сомкнулись
-    int mid = (l + r) / 2; // определяем середину последовательности
-    // и рекурсивно вызываем функцию сортировки для каждой половины
+void merge_sort(int **mas, int *arr, int l, int r) {
+    if (l == r) return;
+    int mid = (l + r) / 2;
     merge_sort(mas, arr, l, mid);
     merge_sort(mas, arr, mid + 1, r);
-    int i = l;  // начало первого пути
-    int j = mid + 1; // начало второго пути
-    int *tmp = (int*)malloc(r * sizeof(int)); // дополнительный массив
-    for (int step = 0; step < r - l + 1; step++){ // для всех элементов дополнительного массива{
-        // записываем в формируемую последовательность меньший из элементов двух путей
-        // или остаток первого пути если j > r
-        if ((j > r) || ((i <= mid) && (arr[i] < arr[j]))){
+    int i = l;
+    int j = mid + 1;
+    int *tmp = (int *) malloc(r * sizeof(int));
+    int **tmp2 = (int **) malloc(r * sizeof(int *));
+
+    for (int step = 0; step < r - l + 1; step++) {
+        if ((j > r) || ((i <= mid) && (arr[i] < arr[j]))) {
             tmp[step] = arr[i];
-            swap(mas, step, i);
+            tmp2[step] = mas[i];
             i++;
-        }
-        else{
+        } else {
             tmp[step] = arr[j];
-            swap(mas, step, i);
+            tmp2[step] = mas[j];
             j++;
         }
     }
-    // переписываем сформированную последовательность в исходный массив
+
     for (int step = 0; step < r - l + 1; step++) {
         arr[l + step] = tmp[step];
-        swap(mas, l + step, step);
+        mas[l + step] = tmp2[step];
     }
 }
 
