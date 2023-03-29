@@ -143,7 +143,7 @@ void add(struct toaster *toast) {
     fflush(stdin);
     printf("Enter a value [Price:]- ");
     scanf("%d", &toast[n].chr[0]/*time_int*/);
-    toast[n].chr[0] = time_int;
+   // toast[n].chr[0] = time_int;
 
     fflush(stdin);
     printf("Enter a value [Power:]- ");
@@ -277,7 +277,7 @@ void remove_(struct toaster *toast) {
     realloc(toast, sizeof(Toaster) * amount);
 }
 
-//база даннфх структур по умолчанию++
+//база даннфх структур по умолчанию++ User has already been invited
 void baza(struct toaster *toast) {
     toast[0].chr[1] = 850;
     toast[1].chr[1] = 930;  //power
@@ -325,15 +325,4 @@ void baza(struct toaster *toast) {
     strcpy(toast[3].tray, chouse);
     strcpy(toast[4].tray, chouse1);
 }
-
-
-
-
-
-
-
-
-
-
-
 
