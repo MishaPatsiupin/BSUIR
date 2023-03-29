@@ -1,8 +1,4 @@
 #include "Hurra_Die_Weit_Geht_Unter.h"
-//https://5element.by/catalog/581-tostery
-//c-text
-
-
 
 int main() {
     pToaster toast;
