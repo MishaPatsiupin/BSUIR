@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(Lab1 C)
+project(OAiP/2semester/1Lab C)
 
 set(CMAKE_C_STANDARD 23)
 
