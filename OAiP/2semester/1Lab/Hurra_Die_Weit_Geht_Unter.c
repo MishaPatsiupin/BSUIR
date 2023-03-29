@@ -21,7 +21,7 @@ int get_choice(int kolichestvo) { //прием циферки
     fflush(stdin);
     printf("Enter your choice: ");
     do {
-        scanf("%c", &num);
+   //     scanf("%c", &num);
         num -= '0';
         if (num < 0 || num > kolichestvo) {
             printf("Wrong number, try again\n");
@@ -270,11 +270,11 @@ void remove_(struct toaster *toast) {
     printf("Enter the number toster the delete\n");
     n = get_choice(amount) - 1;
     for (; n < amount - 1; n++) {
-        toast[n] = toast[n + 1];
+  //      toast[n] = toast[n + 1];
     }
 
     amount--;
-    realloc(toast, sizeof(Toaster) * amount);
+  //  realloc(toast, sizeof(Toaster) * amount);
 }
 
 //база даннфх структур по умолчанию++
