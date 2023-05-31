@@ -1,0 +1,14 @@
+google.com IN A 172.217.10.14
+boogle.com IN CNAME google.com
+facebook.com IN A 157.240.22.35
+bing.com IN A 204.79.197.200
+yahoo.com IN A 98.138.219.231
+amazon.com IN A 176.32.103.205
+fdf IN A 1.34.23.123
+ded.by IN A 123.32.43.23
+fef.t IN CNAME ded.by
+toto.com IN A 123.43.54.3
+rfr.by IN A 23.4.5.6
+fr.v IN A 1.1.1.1
+aaa.by IN A 4.5.73.2
+gtgt.by IN A 3.5.6.7avi.by IN A 3.45.84.85
