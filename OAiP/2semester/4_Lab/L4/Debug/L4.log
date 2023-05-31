@@ -1,0 +1,8 @@
+﻿  tree.c
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(3,27): warning C4028: формальный параметр 1 отличается от объявления
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(27,55): warning C4029: объявленный список формальных параметров отличается от объявления
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(30,76): warning C4020: logAction: слишком много фактических параметров
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(35,47): warning C4020: logAction: слишком много фактических параметров
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(46,68): warning C4020: logAction: слишком много фактических параметров
+C:\Users\misha\Desktop\OAiP\L4\L4\tree.c(49,43): warning C4020: logAction: слишком много фактических параметров
+  L4.vcxproj -> C:\Users\misha\Desktop\OAiP\L4\Debug\L4.exe
