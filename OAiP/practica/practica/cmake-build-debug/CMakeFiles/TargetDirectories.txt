@@ -1,0 +1,3 @@
+C:/Users/misha/Desktop/OAiP/practica/cmake-build-debug/CMakeFiles/practica.dir
+C:/Users/misha/Desktop/OAiP/practica/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/misha/Desktop/OAiP/practica/cmake-build-debug/CMakeFiles/rebuild_cache.dir
