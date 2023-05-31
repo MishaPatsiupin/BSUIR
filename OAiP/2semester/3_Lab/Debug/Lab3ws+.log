@@ -1,0 +1,10 @@
+﻿  Lab3ws+.cpp
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl input_bmp_filename(char *,int)" (?input_bmp_filename@@YAXPADH@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl print_menu(void)" (?print_menu@@YAXXZ) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "int __cdecl get_choice(int)" (?get_choice@@YAHH@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl save_image(char const *,struct BITMAPFILEHEADER,struct BITMAPINFOHEADER,struct RGBTRIPLE *,int)" (?save_image@@YAXPBDUBITMAPFILEHEADER@@UBITMAPINFOHEADER@@PAURGBTRIPLE@@H@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl to_negative(struct RGBTRIPLE *,int,int,int)" (?to_negative@@YAXPAURGBTRIPLE@@HHH@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl to_black_and_white(struct RGBTRIPLE *,int,int,int)" (?to_black_and_white@@YAXPAURGBTRIPLE@@HHH@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl to_gamma_correction(struct RGBTRIPLE *,int,int,int,float)" (?to_gamma_correction@@YAXPAURGBTRIPLE@@HHHM@Z) в функции _main.
+Lab3ws+.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl to_median_filter(struct RGBTRIPLE *,int,int,int,int)" (?to_median_filter@@YAXPAURGBTRIPLE@@HHHH@Z) в функции _main.
+C:\Users\misha\Desktop\OAiP\Lab3ws+\Debug\Lab3ws+.exe : fatal error LNK1120: неразрешенных внешних элементов: 8
