@@ -9,9 +9,6 @@
 #include <QUrl>
 #include "log.h"
 
-#include <symengine/matrix.h>
-#include <symengine/symengine_exception.h>
-#include <symengine/basic.h>
 
 UImatrix::UImatrix(QObject *parent)
     : QObject{parent}
