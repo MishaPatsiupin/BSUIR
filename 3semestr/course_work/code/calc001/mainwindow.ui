@@ -356,7 +356,7 @@
 }</string>
         </property>
         <property name="text">
-         <string>       matrix subtracation</string>
+         <string>       matrix subtraction</string>
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
@@ -588,7 +588,7 @@
 }</string>
         </property>
         <property name="text">
-         <string>           ranf of matrix</string>
+         <string>           rank of matrix</string>
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
@@ -838,7 +838,7 @@
 }</string>
         </property>
         <property name="text">
-         <string>         algoritm rota</string>
+         <string>         algorithm rota</string>
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">

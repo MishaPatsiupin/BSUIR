@@ -9,6 +9,9 @@
 #include <QUrl>
 #include "log.h"
 
+#include <symengine/matrix.h>
+#include <symengine/symengine_exception.h>
+#include <symengine/basic.h>
 
 UImatrix::UImatrix(QObject *parent)
     : QObject{parent}
@@ -178,6 +181,18 @@ std::vector<float> vec_float(mat1.mat_data.begin(), mat1.mat_data.end());
         prepareMatrix();
 }
 
+std::vector<double> roundVectorToTenths(const std::vector<double>& inputVector) {
+        std::vector<double> roundedVector;
+        roundedVector.reserve(inputVector.size());
+
+        for (const double& value : inputVector) {
+            double roundedValue = std::round(value * 10) / 10; // Округляем до десятых
+            roundedVector.push_back(roundedValue);
+        }
+
+        return roundedVector;
+}
+
 std::vector<double> solve(std::vector<std::vector<double>> a, std::vector<double> b) {
         int n = a.size();
         for (int i = 0; i < n; i++) {
@@ -210,7 +225,7 @@ std::vector<double> solve(std::vector<std::vector<double>> a, std::vector<double
         for (int i = 0; i < n; i++) {
             x[i] = a[i][n];
         }
-        return x;
+        return roundVectorToTenths(x);
 }
 
 void UImatrix::action_sly()
