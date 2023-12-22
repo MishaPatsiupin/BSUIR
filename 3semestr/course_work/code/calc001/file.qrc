@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/file">
-        <file>file/rot_temp.txt</file>
-    </qresource>
-</RCC>
