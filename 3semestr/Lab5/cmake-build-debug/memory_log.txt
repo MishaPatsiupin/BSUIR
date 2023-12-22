@@ -1,0 +1,1 @@
+The new operator is called to select 40 bytes of memory.

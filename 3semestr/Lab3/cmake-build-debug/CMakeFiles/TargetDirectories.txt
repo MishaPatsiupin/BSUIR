@@ -1,0 +1,3 @@
+D:/OAiP_3/Lab3/cmake-build-debug/CMakeFiles/Lab3.dir
+D:/OAiP_3/Lab3/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/OAiP_3/Lab3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
