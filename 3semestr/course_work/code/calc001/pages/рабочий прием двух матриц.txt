@@ -1,0 +1,196 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+
+
+
+
+Rectangle {
+    id: win
+    color: "#f5efff"
+    anchors.fill: parent
+
+    property int cols1: 0
+    property int rows1: 0
+     property var matrix1: []
+    property int cols2: 0
+    property int rows2: 0
+     property var matrix2: []
+
+        Connections {
+            target: add_matrix // Указываем целевое соединение
+            /* Объявляем и реализуем функцию, как параметр
+             * объекта и с имененем похожим на название сигнала
+             * Разница в том, что добавляем в начале on и далее пишем
+             * с заглавной буквы
+             * */
+            /*onInput_matrix1: {
+                labelCount.text = count // Устанавливаем счётчик в текстовый лейбл
+            }*/
+        }
+
+
+    Column {
+        anchors.centerIn: parent
+        width: parent.width * 0.8
+        spacing: 10
+
+        Label {
+            text: "Первая матрица"
+        }
+
+        TextField {
+            id: sizeField1
+            width: parent.width
+            placeholderText: "Введите количество строк:"
+            onTextChanged: {
+                var value = parseInt(text);
+                if (value > 5) {
+                    value = 5;
+                    text = "5";
+                }
+                if (value < 1){
+                    value = 1;
+                    text = "1";
+                }
+
+                rows1 = value;
+            }
+        }
+
+        TextField {
+            id: sizeField2
+            width: parent.width
+            placeholderText: "Введите количество столбцов:"
+            onTextChanged: {
+                var value = parseInt(text);
+                if (value > 5) {
+                    value = 5;
+                    text = "5";
+                }
+                if (value < 1){
+                    value = 1;
+                    text = "1";
+                }
+                cols1 = value;
+            }
+        }
+
+        Repeater {
+                    model: rows1
+                    delegate: Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        property int rowIndex: index
+                        Repeater {
+                            model: cols1
+                            TextField {
+                                id: cellField1
+                                width: 35
+                                height: 35
+                                placeholderText: "0"
+                                horizontalAlignment: TextInput.AlignHCenter
+                                verticalAlignment: TextInput.AlignVCenter
+                                font.pixelSize: 20
+                                                        color: "black"
+                                                        background: Rectangle {
+                                                            color: "white"
+                                                            border.color: "grey"
+                                                            border.width: 1
+                                                            radius: 1
+                                                        }
+                                onTextChanged: matrix1[rowIndex * cols1 + index] = text
+                            }
+                        }
+                    }
+                }
+
+        Label {
+            text: "Вторая матрица:"
+        }
+
+        TextField {
+            id: sizeField11
+            width: parent.width
+            placeholderText: "Введите количество строк:"
+            onTextChanged: {
+                var value = parseInt(text);
+                if (value > 5) {
+                    value = 5;
+                    text = "5";
+                }
+                if (value < 1){
+                    value = 1;
+                    text = "1";
+                }
+
+                rows2 = value;
+            }
+        }
+
+        TextField {
+            id: sizeField22
+            width: parent.width
+            placeholderText: "Введите количество столбцов:"
+            onTextChanged: {
+                var value = parseInt(text);
+                if (value > 5) {
+                    value = 5;
+                    text = "5";
+                }
+                if (value < 1){
+                    value = 1;
+                    text = "1";
+                }
+                cols2 = value;
+            }
+        }
+
+        Repeater {
+                    model: rows2
+                    delegate: Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        property int rowIndex: index
+                        Repeater {
+                            model: cols2
+                            TextField {
+                                id: cellField2
+                                width: 35
+                                height: 35
+                                placeholderText: "0"
+                                horizontalAlignment: TextInput.AlignHCenter
+                                verticalAlignment: TextInput.AlignVCenter
+                                font.pixelSize: 20
+                                                        color: "black"
+                                                        background: Rectangle {
+                                                            color: "white"
+                                                            border.color: "grey"
+                                                            border.width: 1
+                                                            radius: 1
+                                                        }
+                                onTextChanged: matrix2[rowIndex * cols2 + index] = text
+                            }
+                        }
+                    }
+                }
+
+        Button {
+        id: submitButton
+        text: "Отправить"
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.3
+        onClicked: {
+
+            add_matrix.input_matrix1(matrix1, cols1, rows1)
+
+            console.log("Количество строк 1й: " + rows1)
+            console.log("Количество столбцов 1й: " + cols1)
+            console.log("Матрица 1: " + matrix1)
+            console.log("Количество строк 2й: " + rows2)
+            console.log("Количество столбцов 2й: " + cols2)
+            console.log("Матрица 2: " + matrix2)
+        }
+        }
+    }
+}
