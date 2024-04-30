@@ -1,3 +1,0 @@
-/home/bear9/Рабочий стол/osisp/course_03/cmake-build-debug/CMakeFiles/course_03.dir
-/home/bear9/Рабочий стол/osisp/course_03/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/bear9/Рабочий стол/osisp/course_03/cmake-build-debug/CMakeFiles/rebuild_cache.dir
