@@ -1,3 +1,0 @@
-/home/bear9/Рабочий стол/course/code/back_sfc/cmake-build-debug/CMakeFiles/back_sfc.dir
-/home/bear9/Рабочий стол/course/code/back_sfc/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/bear9/Рабочий стол/course/code/back_sfc/cmake-build-debug/CMakeFiles/rebuild_cache.dir
