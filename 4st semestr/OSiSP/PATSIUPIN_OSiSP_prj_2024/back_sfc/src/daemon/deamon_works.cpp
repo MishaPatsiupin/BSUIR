@@ -31,26 +31,3 @@ void daemonize() {
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
 }
-
-bool is_process_running(const char* process_name) {
-    char buffer[128];
-    std::string command = std::string("pgrep ") + process_name;
-    std::string result = "";
-    FILE* pipe = popen(command.c_str(), "r");
-
-    if (!pipe) throw std::runtime_error("popen() failed!");
-
-    try {
-        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
-            result += buffer;
-        }
-    } catch (...) {
-        pclose(pipe);
-        throw;
-    }
-
-    pclose(pipe);
-
-
-    return !result.empty();
-}

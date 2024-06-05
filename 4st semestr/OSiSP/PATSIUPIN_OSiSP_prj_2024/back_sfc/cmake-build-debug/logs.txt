@@ -1,0 +1,109 @@
+[2024-May-25 23:52:46.777830] [1] information
+[2024-May-25 23:52:46.778330] [2] Application start
+[2024-May-25 23:52:46.778538] [3] Generated random password
+[2024-May-25 23:52:46.779252] [4] Daemonized the process
+[2024-May-25 23:52:46.779653] [5] Set control directory to: /home/bear9/control/
+[2024-May-25 23:52:46.779772] [6] Set config directory to: /home/bear9/control//config/config.json
+[2024-May-25 23:52:46.779860] [7] Starting config file watcher thread
+[2024-May-25 23:52:46.780487] [8] start watch_config_file
+[2024-May-25 23:52:46.780716] [9] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:52:46.780854] [10] Retrying in 3 seconds...
+[2024-May-25 23:52:49.781128] [11] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:52:49.781641] [12] Retrying in 3 seconds...
+[2024-May-25 23:52:52.782120] [13] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:52:52.782407] [14] Retrying in 3 seconds...
+[2024-May-25 23:52:55.782783] [15] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:52:55.789442] [16] Retrying in 3 seconds...
+[2024-May-25 23:52:58.790437] [17] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:52:58.790777] [18] Retrying in 3 seconds...
+[2024-May-25 23:53:01.791603] [19] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:01.791858] [20] Retrying in 3 seconds...
+[2024-May-25 23:53:04.792287] [21] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:04.792536] [22] Retrying in 3 seconds...
+[2024-May-25 23:53:07.792916] [23] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:07.793256] [24] Retrying in 3 seconds...
+[2024-May-25 23:53:10.793657] [25] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:10.793968] [26] Retrying in 3 seconds...
+[2024-May-25 23:53:13.794411] [27] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:13.794692] [28] Retrying in 3 seconds...
+[2024-May-25 23:53:16.795039] [29] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:16.795330] [30] Retrying in 3 seconds...
+[2024-May-25 23:53:19.795674] [31] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:19.795971] [32] Retrying in 3 seconds...
+[2024-May-25 23:53:22.796283] [33] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:22.796690] [34] Retrying in 3 seconds...
+[2024-May-25 23:53:25.797113] [35] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:25.797329] [36] Retrying in 3 seconds...
+[2024-May-25 23:53:28.798131] [37] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:28.798429] [38] Retrying in 3 seconds...
+[2024-May-25 23:53:31.798775] [39] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:31.798989] [40] Retrying in 3 seconds...
+[2024-May-25 23:53:34.799642] [41] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:34.799907] [42] Retrying in 3 seconds...
+[2024-May-25 23:53:37.800216] [43] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:37.800554] [44] Retrying in 3 seconds...
+[2024-May-25 23:53:40.801399] [45] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:40.801593] [46] Retrying in 3 seconds...
+[2024-May-25 23:53:43.801885] [47] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:43.802169] [48] Retrying in 3 seconds...
+[2024-May-25 23:53:46.802524] [49] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:46.802702] [50] Retrying in 3 seconds...
+[2024-May-25 23:53:49.802944] [51] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:49.803135] [52] Retrying in 3 seconds...
+[2024-May-25 23:53:52.803353] [53] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:52.803474] [54] Retrying in 3 seconds...
+[2024-May-25 23:53:55.803980] [55] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:55.804179] [56] Retrying in 3 seconds...
+[2024-May-25 23:53:58.804860] [57] Failed to add watch for /home/bear9/control//config/config.json
+[2024-May-25 23:53:58.805054] [58] Retrying in 3 seconds...
+[2024-May-25 23:54:01.805542] [59] Protection: Enabled
+[2024-May-25 23:54:01.806963] [60] Path: /home/bear9/testDir
+[2024-May-25 23:54:01.807110] [61] Interval: 1
+[2024-May-25 23:54:01.807239] [62] Backup Type: full
+[2024-May-25 23:54:01.807360] [63] Hash Algorithm: MD5
+[2024-May-25 23:54:01.807478] [64] Notification Channel: system
+[2024-May-25 23:54:01.807595] [65] ||----------------------------------------||
+[2024-May-25 23:54:01.807724] [66] ||-------------- File Information --------||
+[2024-May-25 23:54:01.807841] [67] ||----------------------------------------||
+[2024-May-25 23:54:01.807956] [68] || Path: /home/bear9/testDir
+[2024-May-25 23:54:01.808088] [69] || Force Restore: Disabled
+[2024-May-25 23:54:01.808206] [70] ||----------------------------------------||
+[2024-May-25 23:54:01.808321] [71] || Protection: Enabled
+[2024-May-25 23:54:01.808437] [72] || Interval: 1
+[2024-May-25 23:54:01.808552] [73] || Backup Type: full
+[2024-May-25 23:54:01.808667] [74] || Hash Algorithm: MD5
+[2024-May-25 23:54:01.808782] [75] || Notification Channel: system
+[2024-May-25 23:54:01.808912] [76] ||----------------------------------------||
+[2024-May-25 23:54:01.825420] [77] start main_proc
+[2024-May-25 23:54:03.223699] [78] Hashes calculated and stored
+[2024-May-25 23:54:04.859034] [79] Performing full backup restore
+[2024-May-25 23:54:04.859151] [80] Restoring full backup
+[2024-May-25 23:54:07.917488] [81] Hashes calculated and stored
+[2024-May-25 23:54:09.503151] [82] Config file first loaded
+[2024-May-25 23:54:11.321679] [83] Hashes calculated and stored
+[2024-May-25 23:54:15.988947] [84] Hashes calculated and stored
+[2024-May-25 23:55:12.725392] [85] Hashes calculated and stored
+[2024-May-25 23:55:12.743664] [86] Несоответствие MD5 хеша для файла: /home/bear9/testDir/makefile
+[2024-May-25 23:55:17.279367] [87] Hashes calculated and stored
+[2024-May-25 23:55:17.279672] [88] Несоответствие MD5 хеша для файла: /home/bear9/testDir/makefile
+[2024-May-25 23:56:13.995529] [89] Hashes calculated and stored
+[2024-May-25 23:56:18.820642] [90] Hashes calculated and stored
+[2024-May-25 23:56:29.466455] [91] Config file modified, reloading...
+[2024-May-25 23:56:30.468898] [92] Force Restore: Enabled
+[2024-May-25 23:56:30.469089] [93] ||----------------------------------------||
+[2024-May-25 23:56:30.469209] [94] ||-------------- File Information --------||
+[2024-May-25 23:56:30.469341] [95] ||----------------------------------------||
+[2024-May-25 23:56:30.469468] [96] || Path: /home/bear9/testDir
+[2024-May-25 23:56:30.469570] [97] || Force Restore: Enabled
+[2024-May-25 23:56:30.469659] [98] ||----------------------------------------||
+[2024-May-25 23:56:30.469748] [99] || Protection: Enabled
+[2024-May-25 23:56:30.469835] [100] || Interval: 1
+[2024-May-25 23:56:30.469946] [101] || Backup Type: full
+[2024-May-25 23:56:30.470038] [102] || Hash Algorithm: MD5
+[2024-May-25 23:56:30.470121] [103] || Notification Channel: system
+[2024-May-25 23:56:30.470205] [104] ||----------------------------------------||
+[2024-May-25 23:56:30.470289] [105] start main_proc
+[2024-May-25 23:56:30.470373] [106] Forcing full backup restore
+[2024-May-25 23:56:30.895217] [107] Config file reloaded, mabye
+[2024-May-26 00:04:13.198035] [108] Hashes calculated and stored
+[2024-May-26 00:04:17.988971] [109] Hashes calculated and stored

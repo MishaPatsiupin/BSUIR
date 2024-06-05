@@ -24,6 +24,7 @@ void calculate_and_store_hashes(const std::string &directory, std::unordered_map
             map_hashes[path] = hashes; // assign the pair of hashes
         }
     }
+    BOOST_LOG_TRIVIAL(info) << "Hashes calculated and stored";
 }
 
 std::string exec(const char* cmd) {

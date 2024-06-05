@@ -1,6 +1,9 @@
+#include <boost/filesystem.hpp>
 #include "main_proc.h"
 
 void main_proc(flag_menu_changes flagMenuChanges) {
+    std::string encrypted_file = flagMenu.directory + "backup.tar.gz.enc";
+    BOOST_LOG_TRIVIAL(info) << "start main_proc";
     if (flagMenuChanges.force_restore_changed){
         if (flagMenu.force_restore){
             force_restore_if_needed();
@@ -12,19 +15,22 @@ void main_proc(flag_menu_changes flagMenuChanges) {
             begin_backup();
             check_file(flagMenu.path);
         } else{
-            restore_backup();
-            stop_check_file();
+            if (boost::filesystem::exists(encrypted_file)) {
+                restore_backup();
+                stop_check_file();
+            }
         }
         if (flagMenuChanges.path_changed){
-            restore_backup();
-            stop_check_file();
-
+            if (boost::filesystem::exists(encrypted_file)){
+                restore_backup();
+                stop_check_file();
+                sleep(1);
+            }
             begin_hash();
             begin_backup();
             check_file(flagMenu.path);
         }
     }
-
 }
 
 
