@@ -3,8 +3,8 @@
 1 курс:
  - [АиЛОЦУ курсовая](/Аrithmetic%20and%20logical%20foundations%20of%20computer%20technology/) (арифмитические и логические основы цифровых устройств). Лк -Луцик, Лр - Лукьянова.
  - [ОАиП](/C%20labs_project%20old/readme.md) (основы алгоритмизации и програмирования). Лк - Сидорович, Лр - Скиба.
- - [Учебная%20практика](/C%20labs_project%20old/practica/README). Руководитель - Лукьянова.
- - [Научка%20матем](/Publication/Introduction%20to%20elliptic%20curve%20cryptography/). Науч руководитель - Смирнова.
+ - [Учебная практика](/C%20labs_project%20old/practica/README). Руководитель - Лукьянова.
+ - [Научка матем](/Publication/Introduction%20to%20elliptic%20curve%20cryptography/). Науч руководитель - Смирнова.
 
 2 курс:
  - [ПнЯВУ С++](/C++%20labs/readme.md) (программирование на языках высокого уровня) Лр - Богдан.
