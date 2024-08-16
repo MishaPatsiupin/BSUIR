@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>general.qml</file>
+        <file>rot.qml</file>
+        <file>add_matrix.qml</file>
+        <file>sub_matrix.qml</file>
+        <file>mul_matrix.qml</file>
+        <file>tra_matrix.qml</file>
+        <file>rnk_matrix.qml</file>
+        <file>sly_matrix.qml</file>
+        <file>test.qml</file>
+        <file>det_matrix.qml</file>
+        <file>about.qml</file>
+        <file>dec_vec.qml</file>
+        <file>scal_vec.qml</file>
+        <file>vec_vec.qml</file>
+    </qresource>
+</RCC>

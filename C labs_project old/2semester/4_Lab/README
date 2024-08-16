@@ -1,0 +1,25 @@
+Дерево, угадываем персонажа из теории большого взрыва
+
+Результат работы:
+[31-05-2023 13:46:26] Program started
+[31-05-2023 13:46:26] Tree loaded from file
+[31-05-2023 13:46:26] New game started
+[31-05-2023 13:46:26] Program output: Does the character like science? (yes/no)
+[31-05-2023 13:46:28] User input: y
+
+[31-05-2023 13:46:28] Program output: Is this a close relative of one of the main characters? (yes/no)
+[31-05-2023 13:46:28] User input: y
+
+[31-05-2023 13:46:28] Program output: Maybe it's a close friend? (yes/no)
+[31-05-2023 13:46:29] User input: y
+
+[31-05-2023 13:46:29] Program output: Does she work in a comic book store? (yes/no)
+[31-05-2023 13:46:30] User input: 
+
+[31-05-2023 13:46:30] Program output: loiu (yes/no)
+[31-05-2023 13:46:31] User input: n
+
+[31-05-2023 13:46:31] Program output: I think it's Jill
+[31-05-2023 13:46:35] User input: y
+
+[31-05-2023 13:46:42] Program exited

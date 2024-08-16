@@ -1,0 +1,7 @@
+﻿  Source.c
+C:\Users\misha\Desktop\OAiP\Lab_ty_ty_ty\ex_arxiv\Source.c(7,21): warning C4013: get_file_size_by_path: нет определения; предполагается "extern" с возвратом типа "int"
+  func.c
+C:\Users\misha\Desktop\OAiP\Lab_ty_ty_ty\ex_arxiv\func.c(67,29): warning C4474: "printf" : для строки формата передано слишком много аргументов
+C:\Users\misha\Desktop\OAiP\Lab_ty_ty_ty\ex_arxiv\func.c(67,29): message : заполнители и их параметры ожидают переменное число аргументов в количестве 0, но было предоставлено 1
+  Создание кода...
+  ex_arxiv.vcxproj -> C:\Users\misha\Desktop\OAiP\Lab_ty_ty_ty\ex_arxiv\ex_arxiv\Debug\ex_arxiv.exe

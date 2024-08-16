@@ -1,0 +1,71 @@
+org 100h
+
+segment .data
+com1_port equ 3F8h ; Адрес порта COM1
+com2_port equ 2F8h ; Адрес порта COM2
+
+segment .text
+mov dx, com1_port + 1 ; Установка регистра IER (Interrupt Enable Register) для COM1
+mov al, 0 ; Отключение всех прерываний
+out dx, al
+
+mov dx, com1_port + 3 ; Установка регистра LCR (Line Control Register) для COM1
+mov al, 80h ; Включение DLAB (Divisor Latch Access Bit) для доступа к регистрам делителя
+out dx, al
+
+mov dx, com1_port ; Установка регистра DLL (Divisor Latch Low Byte) для COM1
+mov al, 0Ch ; Задание делителя для установки скорости передачи 9600 бит/с
+out dx, al
+
+mov dx, com1_port + 1 ; Установка регистра DLM (Divisor Latch High Byte) для COM1
+mov al, 0 ; Верхний байт делителя
+out dx, al
+
+mov dx, com1_port + 3 ; Установка регистра LCR (Line Control Register) для COM1
+mov al, 3 ; 8 бит данных, без бита четности, 1 стоп-бит
+out dx, al
+
+mov dx, com2_port + 1 ; Установка регистра IER (Interrupt Enable Register) для COM2
+mov al, 0 ; Отключение всех прерываний
+out dx, al
+
+mov dx, com2_port + 3 ; Установка регистра LCR (Line Control Register) для COM2
+mov al, 80h ; Включение DLAB (Divisor Latch Access Bit) для доступа к регистрам делителя
+out dx, al
+
+mov dx, com2_port ; Установка регистра DLL (Divisor Latch Low Byte) для COM2
+mov al, 0Ch ; Задание делителя для установки скорости передачи 9600 бит/с
+out dx, al
+
+mov dx, com2_port + 1 ; Установка регистра DLM (Divisor Latch High Byte) для COM2
+mov al, 0 ; Верхний байт делителя
+out dx, al
+
+mov dx, com2_port + 3 ; Установка регистра LCR (Line Control Register) для COM2
+mov al, 3 ; 8 бит данных, без бита четности, 1 стоп-бит
+out dx, al
+
+mov dx, com1_port + 5 ; Установка регистра LSR (Line Status Register) для COM1
+wait_for_transmit:
+in al, dx ; Проверка флага Transmitter Empty (TE)
+test al, 20h ; Маскирование всех флагов, кроме TE
+jz wait_for_transmit ; Если TE = 0, ожидаем
+
+mov dx, com1_port ; Установка регистра THR (Transmitter Holding Register) для COM1
+mov al, 'H' ; Загрузка символа "H"
+out dx, al
+
+mov dx, com2_port + 5 ; Установка регистра LSR (Line Status Register) для COM2
+wait_for_receive:
+in al, dx ; Проверка флага Data Ready (DR)
+test al, 1 ; Маскирование всех флагов, кроме DR
+jz wait_for_receive ; Если DR = 0, ожидаем
+
+mov dx, com2_port ; Установка регистра RBR (Receiver Buffer Register) для COM2
+in al, dx ; Чтение символа из COM2
+
+mov ah, 09
+
+
+
+; [SOURCE]: D:\APC\Лабы\1\3.asm

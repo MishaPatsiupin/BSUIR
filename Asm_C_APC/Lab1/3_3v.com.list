@@ -1,0 +1,86 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+3_3v.com -- emu8086 assembler version: 4.08  
+ 
+[ 26.02.2024  --  11:07:19 ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       org 100h
+[   2]        :                                       
+[   3]        :                                       segment .data
+[   4]        :                                       com1_port equ 3F8h ; Адрес порта COM1
+[   5]        :                                       com2_port equ 2F8h ; Адрес порта COM2
+[   6]        :                                       
+[   7]        :                                       segment .text
+[   8]    0100: BA F9 03                              mov dx, com1_port + 1 ; Установка регистра IER (Interrupt Enable Register) для COM1
+[   9]    0103: B0 00                                 mov al, 0 ; Отключение всех прерываний
+[  10]    0105: EE                                    out dx, al
+[  11]        :                                       
+[  12]    0106: BA FB 03                              mov dx, com1_port + 3 ; Установка регистра LCR (Line Control Register) для COM1
+[  13]    0109: B0 80                                 mov al, 80h ; Включение DLAB (Divisor Latch Access Bit) для доступа к регистрам делителя
+[  14]    010B: EE                                    out dx, al
+[  15]        :                                       
+[  16]    010C: BA F8 03                              mov dx, com1_port ; Установка регистра DLL (Divisor Latch Low Byte) для COM1
+[  17]    010F: B0 0C                                 mov al, 0Ch ; Задание делителя для установки скорости передачи 9600 бит/с
+[  18]    0111: EE                                    out dx, al
+[  19]        :                                       
+[  20]    0112: BA F9 03                              mov dx, com1_port + 1 ; Установка регистра DLM (Divisor Latch High Byte) для COM1
+[  21]    0115: B0 00                                 mov al, 0 ; Верхний байт делителя
+[  22]    0117: EE                                    out dx, al
+[  23]        :                                       
+[  24]    0118: BA FB 03                              mov dx, com1_port + 3 ; Установка регистра LCR (Line Control Register) для COM1
+[  25]    011B: B0 03                                 mov al, 3 ; 8 бит данных, без бита четности, 1 стоп-бит
+[  26]    011D: EE                                    out dx, al
+[  27]        :                                       
+[  28]    011E: BA F9 02                              mov dx, com2_port + 1 ; Установка регистра IER (Interrupt Enable Register) для COM2
+[  29]    0121: B0 00                                 mov al, 0 ; Отключение всех прерываний
+[  30]    0123: EE                                    out dx, al
+[  31]        :                                       
+[  32]    0124: BA FB 02                              mov dx, com2_port + 3 ; Установка регистра LCR (Line Control Register) для COM2
+[  33]    0127: B0 80                                 mov al, 80h ; Включение DLAB (Divisor Latch Access Bit) для доступа к регистрам делителя
+[  34]    0129: EE                                    out dx, al
+[  35]        :                                       
+[  36]    012A: BA F8 02                              mov dx, com2_port ; Установка регистра DLL (Divisor Latch Low Byte) для COM2
+[  37]    012D: B0 0C                                 mov al, 0Ch ; Задание делителя для установки скорости передачи 9600 бит/с
+[  38]    012F: EE                                    out dx, al
+[  39]        :                                       
+[  40]    0130: BA F9 02                              mov dx, com2_port + 1 ; Установка регистра DLM (Divisor Latch High Byte) для COM2
+[  41]    0133: B0 00                                 mov al, 0 ; Верхний байт делителя
+[  42]    0135: EE                                    out dx, al
+[  43]        :                                       
+[  44]    0136: BA FB 02                              mov dx, com2_port + 3 ; Установка регистра LCR (Line Control Register) для COM2
+[  45]    0139: B0 03                                 mov al, 3 ; 8 бит данных, без бита четности, 1 стоп-бит
+[  46]    013B: EE                                    out dx, al
+[  47]        :                                       
+[  48]    013C: BA FD 03                              mov dx, com1_port + 5 ; Установка регистра LSR (Line Status Register) для COM1
+[  49]    013F:                                       wait_for_transmit:
+[  50]    013F: EC                                    in al, dx ; Проверка флага Transmitter Empty (TE)
+[  51]    0140: A8 20                                 test al, 20h ; Маскирование всех флагов, кроме TE
+[  52]    0142: 74 FB                                 jz wait_for_transmit ; Если TE = 0, ожидаем
+[  53]        :                                       
+[  54]    0144: BA F8 03                              mov dx, com1_port ; Установка регистра THR (Transmitter Holding Register) для COM1
+[  55]    0147: B0 48                                 mov al, 'H' ; Загрузка символа "H"
+[  56]    0149: EE                                    out dx, al
+[  57]        :                                       
+[  58]    014A: BA FD 02                              mov dx, com2_port + 5 ; Установка регистра LSR (Line Status Register) для COM2
+[  59]    014D:                                       wait_for_receive:
+[  60]    014D: EC                                    in al, dx ; Проверка флага Data Ready (DR)
+[  61]    014E: A8 01                                 test al, 1 ; Маскирование всех флагов, кроме DR
+[  62]    0150: 74 FB                                 jz wait_for_receive ; Если DR = 0, ожидаем
+[  63]        :                                       
+[  64]    0152: BA F8 02                              mov dx, com2_port ; Установка регистра RBR (Receiver Buffer Register) для COM2
+[  65]    0155: EC                                    in al, dx ; Чтение символа из COM2
+[  66]        :                                       
+[  67]    0156: B4 09                                 mov ah, 09
+[  68]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

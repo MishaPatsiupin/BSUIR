@@ -1,0 +1,142 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+2.exe -- emu8086 assembler version: 4.08  
+ 
+[ 24.02.2024  --  19:22:03 ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       .model small
+[   2]        :                                       .stack 100h
+[   3]        :                                       
+[   4]        :                                       .data
+[   5]        :                                       
+[   6]    0100: 57 72 69 74 65 20 65 72 72 6F 72 21   Error_Write db "Write error!",0Dh,0Ah,'$'
+                0D 0A 24                            
+[   7]    010F: 52 65 61 64 20 65 72 72 6F 72 21 0D   Error_Read db "Read error!",0Dh,0Ah,'$'
+                0A 24                               
+[   8]    011D: 42 79 74 65 20 73 65 6E 74 3A 20 24   Information db "Byte sent: $"
+                                                    
+[   9]        :                                       
+[  10]        :                                       .code
+[  11]        :                                       
+[  12]    0130: EB 47                                 jmp start
+[  13]        :                                       
+[  14]    0132:                                       Init_COM1 proc
+[  15]    0132: 33 C0                                 xor ax,ax
+[  16]    0134: B0 A3                                 mov al,10100011b
+[  17]    0136: BA 00 00                              mov dx,0
+[  18]    0139: CD 14                                 int 14h
+[  19]    013B: C3                                    ret
+[  20]        :                                       Init_COM1 endp
+[  21]        :                                       
+[  22]    013C:                                       IsWrite_COM1 proc
+[  23]    013C: B0 41                                 mov al,'A'
+[  24]    013E: B4 01                                 mov ah,1
+[  25]    0140: BA 00 00                              mov dx,0
+[  26]    0143: CD 14                                 int 14h
+[  27]    0145: A8 80                                 test al,80h
+[  28]    0147: 75 01                                 jnz NoWRite
+[  29]    0149: C3                                    ret
+[  30]        :                                       IsWrite_COM1 endp
+[  31]        :                                       
+[  32]    014A:                                       NoWRite proc
+[  33]    014A: B4 09                                 mov ah,9
+[  34]    014C: BA 00 00                              mov dx,offset Error_Write
+[  35]    014F: 83 C2 02                              add dx,2
+[  36]    0152: CD 21                                 int 21h
+[  37]    0154: C3                                    ret
+[  38]        :                                       NoWRite endp
+[  39]        :                                       
+[  40]    0155:                                       IsRead_COM2 proc
+[  41]    0155: B4 02                                 mov ah,2
+[  42]    0157: BA 01 00                              mov dx,1
+[  43]    015A: CD 14                                 int 14h
+[  44]    015C: A8 80                                 test al,80h
+[  45]    015E: 75 01                                 jnz NoRead
+[  46]    0160: C3                                    ret
+[  47]        :                                       IsRead_COM2 endp
+[  48]        :                                       
+[  49]    0161:                                       NoRead proc
+[  50]    0161: B4 09                                 mov ah,9
+[  51]    0163: BA 0F 00                              mov dx,offset Error_Read
+[  52]    0166: 83 C2 02                              add dx,2
+[  53]    0169: CD 21                                 int 21h
+[  54]    016B: C3                                    ret
+[  55]        :                                       NoRead endp
+[  56]        :                                       
+[  57]    016C:                                       Output proc
+[  58]    016C: B4 02                                 mov ah,02h
+[  59]    016E: 8A D0                                 mov dl,al
+[  60]    0170: CD 21                                 int 21h
+[  61]    0172: C3                                    ret
+[  62]        :                                       Output endp
+[  63]        :                                       
+[  64]    0173:                                       Exit proc
+[  65]    0173: B8 00 4C                              mov ax,4C00h
+[  66]    0176: CD 21                                 int 21h
+[  67]    0178: C3                                    ret
+[  68]        :                                       Exit endp
+[  69]        :                                       
+[  70]    0179:                                       start:
+[  71]    0179: E8 B6 FF                              call Init_COM1
+[  72]    017C: E8 BD FF                              call IsWrite_COM1
+[  73]    017F: B0 65                                 mov al,'e'
+[  74]    0181: E8 D1 FF                              call IsRead_COM2
+[  75]    0184: 50                                    push ax
+[  76]        :                                       
+[  77]    0185: B4 09                                 mov ah,9
+[  78]    0187: BA 1D 00                              mov dx,offset Information
+[  79]    018A: 83 C2 02                              add dx,2
+[  80]    018D: CD 21                                 int 21h
+[  81]        :                                       
+[  82]    018F: 58                                    pop ax
+[  83]    0190: E8 D9 FF                              call Output
+[  84]    0193: E8 DD FF                              call Exit
+[  85]        :                                       
+[  86]        :                                       end start
+[  87]        :                                       
+[  88]        :                                       
+ 
+===================================================================================================
+ 
+EXE HEADER - bytes from 0000 to 01FF inclusive.
+
+0000: 4D      -   exe signature (M)
+0001: 5A      -   exe signature (Z)
+0002: 96      -   bytes on last page (l.byte)
+0003: 01      -   bytes on last page (h.byte)
+0004: 02      -   512 byte pages in file (l.byte)
+0005: 00      -   512 byte pages in file (h.byte)
+0006: 00      -   relocations (l.byte)
+0007: 00      -   relocations (h.byte)
+0008: 20      -   paragraphs in header (l.byte)
+0009: 00      -   paragraphs in header (h.byte)
+000A: 00      -   minimum memory (l.byte)
+000B: 00      -   minimum memory (h.byte)
+000C: FF      -   maximum memory (l.byte)
+000D: FF      -   maximum memory (h.byte)
+000E: 00      -   SS - stack segment (l.byte)
+000F: 00      -   SS - stack segment (h.byte)
+0010: 00      -   SP - stack pointer (l.byte)
+0011: 01      -   SP - stack pointer (h.byte)
+0012: F3      -   check sum (l.byte)
+0013: 95      -   check sum (h.byte)
+0014: 49      -   IP - instruction pointer (l.byte)
+0015: 00      -   IP - instruction pointer (h.byte)
+0016: 13      -   CS - code segment (l.byte)
+0017: 00      -   CS - code segment (h.byte)
+0018: 1E      -   relocation table adress (l.byte)
+0019: 00      -   relocation table adress (h.byte)
+001A: 00      -   overlay number (l.byte)
+001B: 00      -   overlay number (h.byte)
+001C: 01      -   signature (l.byte)
+001D: 00      -   signature (h.byte)
+001E to 01FF  -   reserved relocation area  (00) 
+
+
+
+
+===================================================================================================

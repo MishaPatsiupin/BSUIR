@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>ing_photo/open,close_menu.png</file>
+        <file>ing_photo/addition.png</file>
+        <file>ing_photo/d.png</file>
+        <file>ing_photo/menu.png</file>
+        <file>ing_photo/mul.png</file>
+        <file>ing_photo/sub.png</file>
+        <file>ing_photo/t.png</file>
+        <file>ing_photo/clay.png</file>
+        <file>ing_photo/const.png</file>
+        <file>ing_photo/d_dx.png</file>
+        <file>ing_photo/integral.png</file>
+        <file>ing_photo/rot-removebg-preview.png</file>
+        <file>ing_photo/ypavn.png</file>
+        <file>ing_photo/aboat.png</file>
+        <file>ing_photo/rnk.png</file>
+        <file>ing_photo/calculator.png</file>
+        <file>ing_photo/icon.png</file>
+        <file>ing_photo/icon2.png</file>
+        <file>ing_photo/ckal-.png</file>
+        <file>ing_photo/kol-.png</file>
+        <file>ing_photo/vec-.png</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

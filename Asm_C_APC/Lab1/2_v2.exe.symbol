@@ -1,0 +1,22 @@
+< THE SYMBOL TABLE >  2_v2.exe  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+STACK                    	00000     	-5        	SEGMENT   	(ITSELF)  
+DATA                     	00010     	-5        	SEGMENT   	(ITSELF)  
+ERROR_WRITE              	00000     	1         	VAR       	data      
+ERROR_READ               	0000F     	1         	VAR       	data      
+INFORMATION              	0001D     	1         	VAR       	data      
+CODE                     	00013     	-5        	SEGMENT   	(ITSELF)  
+INIT_COM1                	00002     	-1        	NEAR      	code      
+ISWRITE_COM1             	0000C     	-1        	NEAR      	code      
+NOWRITE                  	0001A     	-1        	NEAR      	code      
+ISREAD_COM2              	00025     	-1        	NEAR      	code      
+NOREAD                   	00031     	-1        	NEAR      	code      
+OUTPUT                   	0003C     	-1        	NEAR      	code      
+EXIT                     	00043     	-1        	NEAR      	code      
+START                    	00049     	-1        	LABEL     	code      
+===================================================================================================
+[ 24.02.2024  --  19:31:12 ] 
+< END >
+ 
