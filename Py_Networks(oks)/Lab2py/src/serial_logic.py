@@ -64,7 +64,7 @@ class SerialLogic:
         except serial.SerialException as e:
             print(f"Ошибка: {e}")
             return False
-
+    
     def send_packet(self, send_port, receive_port, message, parity):
         parity_setting = {
             "None": serial.PARITY_NONE,
@@ -77,14 +77,15 @@ class SerialLogic:
 
         try:
             with serial.Serial(send_port, self.baudrate, timeout=1, parity=parity_setting) as ser1, \
-                 serial.Serial(receive_port, self.baudrate, timeout=1, parity=parity_setting) as ser2:
+                serial.Serial(receive_port, self.baudrate, timeout=1, parity=parity_setting) as ser2:
                 time.sleep(1)  # Задержка для установления соединения
-                ser1.write(message.encode())
+                print(f"w-> {message}")
+                ser1.write(message)  # Убедитесь, что message уже в байтовом формате
 
                 # Проверка ответа
                 if ser2.in_waiting > 0:
-                    response = ser2.read(ser2.in_waiting).decode()
-                    print(f"-> {response}")
+                    response = ser2.read(ser2.in_waiting)
+                    print(f"r-> {response}")
                     return response
                 else:
                     print("Нет ответа от порта.")
@@ -92,53 +93,64 @@ class SerialLogic:
         except serial.SerialException as e:
             print(f"Ошибка: {e}")
             return None
-        
-    def bit_stuffing(self, data):
-        stuffed = ''
-        count = 0
-        for bit in data:
-            stuffed += bit
-            if bit == '1':
-                count += 1
-                if count == 5:
-                    stuffed += '0'  # Вставляем 0 после пяти единиц
-                    count = 0
-            else:
-                count = 0
-        return stuffed
-    
-    def highlight_bit_stuffing(self, data):
-        highlighted_data = ''
-        count = 0
-        
-        for i in range(len(data)):
-            bit = data[i]
-            highlighted_data += bit
             
-            if bit == '1':
-                count += 1
-            else:
-                count = 0
-            
-            # Проверка на наличие 5 единиц подряд
-            if count == 5 and i + 1 < len(data) and data[i + 1] == '0':
-                highlighted_data += '_'  # Добавляем кавычки перед вставленным битом
-                highlighted_data += '0'    # Вставляем бит-стафф
-                highlighted_data += '_'    # Добавляем кавычки после вставленного бита
-                count = 0  # Сброс счетчика
+    def byte_stuffing(self, data):
+        stuffed = bytearray()
+        stuffing_byte = bytearray([0x21])  # Байт, который будет вставляться
+        byte_to_check_1 = 0x32  # Байт 2
+        byte_to_check_2 = 0x33  # Байт 3
 
-        return highlighted_data
+        i = 0
+        while i < len(data):
+            byte = data[i]  # Берем текущий байт
+            stuffed.append(byte)  # Добавляем текущий байт
 
-    def de_bit_stuffing(self, stuffed_data):
-        unstuffed = ''
-        count = 0
-        for bit in stuffed_data:
-            unstuffed += bit
-            if bit == '1':
-                count += 1
-                if count == 5:
-                    # Пропускаем следующий бит, если это 0 (бит-стаффинг)
-                    continue
-            else:
-                count = 0
-        return unstuffed
+            # Проверка на последовательное совпадение с байтами 2 и 3
+            if byte == byte_to_check_2 and i - 1 >= 0 and data[i - 1] == byte_to_check_1:
+                # Вставляем байт-стафф после 0x32 и 0x33
+                stuffed.extend(stuffing_byte)
+                print("Вставлен байт-стафф после 0x32 и 0x33")
+
+            i += 1
+
+        return bytes(stuffed)
+
+    def highlight_byte_stuffing(self, data):
+        stuffed = bytearray()
+        byte_to_check_1 = 0x32  # Байт 2
+        byte_to_check_2 = 0x33  # Байт 3
+
+        i = 0
+        while i < len(data):
+            byte = data[i]  # Берем текущий байт
+            stuffed.append(byte)  # Добавляем текущий байт
+
+            # Проверка на последовательное совпадение с байтами 2 и 3
+            if byte == byte_to_check_2 and i - 1 >= 0 and data[i - 1] == byte_to_check_1:
+                # Вставляем байт-стафф после 0x32 и 0x33 только один раз
+                stuffed.extend(b'_!_')
+                print("Вставлен байт-стафф после 0x32 и 0x33")
+
+                # Пропускаем следующий байт (0x33)
+                i += 1  # Увеличиваем индекс, чтобы избежать повторного добавления
+
+            i += 1
+
+        return bytes(stuffed)
+
+    def de_byte_stuffing(self, stuffed_data):
+        unstuffed = bytearray()
+        stuffing_byte = bytearray([0x21])
+        
+        i = 0
+        while i < len(stuffed_data):
+            unstuffed.append(stuffed_data[i])
+
+            # Проверка на наличие байта-стаффа
+            if unstuffed[-1:] == stuffing_byte:
+                # Удаляем последний вставленный байт-стафф
+                unstuffed.pop()
+
+            i += 1
+
+        return bytes(unstuffed)

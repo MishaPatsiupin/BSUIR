@@ -3,20 +3,25 @@ from tkinter import scrolledtext, ttk, messagebox
 from serial_logic import SerialLogic
 
 class SerialInterfaceApp:
-    # Константы для размеров полей пакета
-    FLAG_SIZE = 8
-    DESTINATION_ADDRESS_SIZE = 4
-    SOURCE_ADDRESS_SIZE = 4
-    DATA_SIZE = 23
+
+    FLAG_SIZE = 2
+    flag = "$x" 
+
+    DESTINATION_ADDRESS_SIZE = 1
+    destination = bytes([0x30])
+
+    SOURCE_ADDRESS_SIZE = 1
+    DATA_SIZE = 24
+
     FCS_SIZE = 1
+    fcs = bytes([0x30])
 
     def __init__(self, master):
         self.master = master
         self.master.title("Serial Interface")
         self.logic = SerialLogic()
 
-        # Установка минимальных размеров окна
-        self.master.minsize(800, 600)  # Ширина 800, высота 600
+        self.master.minsize(800, 600)  
 
         self.setup_ui()
         self.populate_ports()
@@ -29,7 +34,7 @@ class SerialInterfaceApp:
         self.send_port_label = tk.Label(self.send_frame, text="Пара отправки:")
         self.send_port_label.pack(side=tk.LEFT, padx=5)
 
-        self.send_port_combobox = ttk.Combobox(self.send_frame, width=15)  # Увеличиваем ширину
+        self.send_port_combobox = ttk.Combobox(self.send_frame, width=15)  
         self.send_port_combobox.pack(side=tk.LEFT, padx=5)
 
         self.send_connected_port_label = tk.Label(self.send_frame, text="Связанный порт:")
@@ -47,7 +52,7 @@ class SerialInterfaceApp:
         self.read_port_label = tk.Label(self.read_frame, text="Пара чтения:")
         self.read_port_label.pack(side=tk.LEFT, padx=5)
 
-        self.read_port_combobox = ttk.Combobox(self.read_frame, width=15)  # Увеличиваем ширину
+        self.read_port_combobox = ttk.Combobox(self.read_frame, width=15)  
         self.read_port_combobox.pack(side=tk.LEFT, padx=5)
 
         self.read_connected_port_label = tk.Label(self.read_frame, text="Связанный порт:")
@@ -71,13 +76,13 @@ class SerialInterfaceApp:
         self.left_output_label = tk.Label(self.left_output_frame, text="Вывод с первого порта:")
         self.left_output_label.pack()
 
-        self.left_output_text = scrolledtext.ScrolledText(self.left_output_frame, width=60, height=10, state='disabled')  # Увеличиваем ширину
+        self.left_output_text = scrolledtext.ScrolledText(self.left_output_frame, width=60, height=10, state='disabled')
         self.left_output_text.pack(padx=5, pady=5)
 
         self.right_output_label = tk.Label(self.right_output_frame, text="Вывод со второго порта:")
         self.right_output_label.pack()
 
-        self.right_output_text = scrolledtext.ScrolledText(self.right_output_frame, width=60, height=10, state='disabled')  # Увеличиваем ширину
+        self.right_output_text = scrolledtext.ScrolledText(self.right_output_frame, width=60, height=10, state='disabled')
         self.right_output_text.pack(padx=5, pady=5)
 
         # Параметры паритета для первого порта 
@@ -95,13 +100,10 @@ class SerialInterfaceApp:
         self.input_frame_send = tk.Frame(self.master)
         self.input_frame_send.pack(pady=10)
 
-        self.input_label_send = tk.Label(self.input_frame_send, text="Биты (0/1) для первого порта:")
+        self.input_label_send = tk.Label(self.input_frame_send, text="Ввод первого порта:")
         self.input_label_send.pack(side=tk.LEFT, padx=5)
 
-        # Настройка валидации ввода
-        vcmd_send = (self.master.register(self.validate_input), '%S')
-
-        self.input_entry_send = tk.Entry(self.input_frame_send, width=40, validate='key', validatecommand=vcmd_send)
+        self.input_entry_send = tk.Entry(self.input_frame_send, width=40)
         self.input_entry_send.pack(side=tk.LEFT, padx=5)
         self.input_entry_send.bind("<Return>", self.send_message_first)
 
@@ -120,13 +122,10 @@ class SerialInterfaceApp:
         self.input_frame_receive = tk.Frame(self.master)
         self.input_frame_receive.pack(pady=10)
 
-        self.input_label_receive = tk.Label(self.input_frame_receive, text="Биты (0/1) для второго порта:")
+        self.input_label_receive = tk.Label(self.input_frame_receive, text="Ввод второго порта:")
         self.input_label_receive.pack(side=tk.LEFT, padx=5)
 
-        # Настройка валидации ввода
-        vcmd_receive = (self.master.register(self.validate_input), '%S')
-
-        self.input_entry_receive = tk.Entry(self.input_frame_receive, width=40, validate='key', validatecommand=vcmd_receive)
+        self.input_entry_receive = tk.Entry(self.input_frame_receive, width=40)
         self.input_entry_receive.pack(side=tk.LEFT, padx=5)
         self.input_entry_receive.bind("<Return>", self.send_message_second)
 
@@ -145,9 +144,6 @@ class SerialInterfaceApp:
         self.current_frame_label.pack(pady=5)
 
         self.bytes_sent = 0
-
-    def validate_input(self, char):
-        return char in '01'
 
     def update_status_window(self, port_speed, bytes_sent):
         self.port_speed_label.config(text=f"Скорость порта: {port_speed}")
@@ -195,13 +191,9 @@ class SerialInterfaceApp:
             self.read_port_combobox.set('')
 
     def send_message(self, input_entry, output_text, port_combobox, is_first=True):
-        message = input_entry.get()
+        message = input_entry.get().strip() 
+        print(message)
         if not message:
-            return
-
-        # Проверка на допустимые символы
-        if not all(bit in '01' for bit in message):
-            messagebox.showerror("Ошибка", "Введите только символы '0' и '1'.")
             return
 
         selected_port = port_combobox.get()
@@ -211,55 +203,64 @@ class SerialInterfaceApp:
             messagebox.showerror("Ошибка", "Нет связанного порта для отправки.")
             return
 
-        # Формирование флага
-        flag = format(self.DATA_SIZE, '0{}b'.format(self.FLAG_SIZE))  # Двоичное представление DATA_SIZE
+        source_address = str(selected_port.replace('COM', ''))  # Номер COM-порта
 
-        # Формирование адресов
-        destination_address = '0000'  # нулевой
-        source_address = format(int(selected_port.replace('COM', '')), '0{}b'.format(self.SOURCE_ADDRESS_SIZE))  # Номер COM-порта
+        byte_data = message.encode()
 
-        # Убедитесь, что длина данных не превышает фиксированный размер
-        if len(message) > self.DATA_SIZE:
-            message = message[:self.DATA_SIZE]  # Обрезаем сообщение до максимального размера
-
-        # Бит-стаффинг
-        stuffed_data = self.logic.bit_stuffing(message)
-
-        # Заполнение данными до фиксированного размера
-        data = stuffed_data.ljust(self.DATA_SIZE, '0')  # Дополняем нулями до DATA_SIZE
-
-        # FCS
-        fcs = '0' * self.FCS_SIZE  
+        # Обрезаем до 24 байт и дополняем нулями при необходимости
+        if len(byte_data) > self.DATA_SIZE:
+            byte_data = byte_data[:self.DATA_SIZE]
+        elif len(byte_data) < self.DATA_SIZE:
+            byte_data += b'\x00' * (self.DATA_SIZE - len(byte_data))
 
         # Формирование полного пакета
-        packet = f"{flag}{destination_address}{source_address}{data}{fcs}"
+        flag = self.flag[:self.FLAG_SIZE]  # Убедитесь, что длина флага 2 байта
+        destination_address = self.destination  # Преобразуем адрес назначения в байт
+        source_address = source_address.encode()  # Преобразуем адрес источника в байт
+        fcs = self.fcs  # Пример контрольной суммы (здесь нужно вычислить реальное значение)
 
-        # Проверка длины пакета
-        expected_length = (self.FLAG_SIZE + self.DESTINATION_ADDRESS_SIZE + self.SOURCE_ADDRESS_SIZE + len(data) + self.FCS_SIZE)
+        packet = (
+            flag.encode() + 
+            destination_address + 
+            source_address + 
+            byte_data + 
+            fcs
+        )
+
+        expected_length = self.FLAG_SIZE + self.DESTINATION_ADDRESS_SIZE + self.SOURCE_ADDRESS_SIZE + self.DATA_SIZE + self.FCS_SIZE
         
         if len(packet) != expected_length:
             messagebox.showerror("Ошибка", "Некорректная длина пакета.")
             return
 
-        # Определение паритета
+        # Применяем байт-стаффинг ко всему пакету
+        stuffed_packet = self.logic.byte_stuffing(packet)
+        print(packet)
+
         parity = self.parity_combobox_send.get() if is_first else self.parity_combobox_receive.get()
+        response = self.logic.send_packet(connected_port, selected_port, stuffed_packet, parity)
 
-        # Отправляем пакет
-        response = self.logic.send_packet(connected_port, selected_port, packet, parity)
         self.update_output(output_text, response, connected_port)
-
-        # Увеличиваем счетчик переданных байт
-        self.bytes_sent += len(packet) // 8
+        self.bytes_sent += len(stuffed_packet) // 8
         self.update_status_window(self.logic.get_port_speed(selected_port), self.bytes_sent)
 
     def update_output(self, output_text, message, connected_port):
-        highlighted_message = self.logic.highlight_bit_stuffing(message)
-        self.current_frame_label.config(text=f"Принятый кадр: {highlighted_message}")
+        if message is None:
+            return
 
-        unstuffed_message = self.logic.de_bit_stuffing(message)
+        highlighted_message = self.logic.highlight_byte_stuffing(message)
+        self.current_frame_label.config(text=f"Принято: {highlighted_message}")
+
+        unstuffed_message = self.logic.de_byte_stuffing(message)
+        processed_data = unstuffed_message[4:-1]
+        processed_data = processed_data.replace(b'\x00', b'')
+        output_data = processed_data.decode('utf-8', errors='ignore')
+
         output_text.config(state='normal')
-        output_text.insert(tk.END, f"-> {unstuffed_message}\n")
-        output_text.insert(tk.END, f"->'Flag___'DsA'SoA'Data__________________'F \n")
+        output_text.insert(tk.END, f"-> {unstuffed_message.decode(errors='replace')}\n")
+        output_text.insert(tk.END, f"->'f'DS'Data__________________'F \n")
+        output_text.insert(tk.END, f"Data -> {output_data}\n\n")
+
         output_text.config(state='disabled')
 
     def send_message_first(self, event=None):
