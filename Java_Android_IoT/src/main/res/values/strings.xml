@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">дома</string>
+    <string name="navigation_drawer_open">Адкрыць навігацыйнае меню</string>
+    <string name="navigation_drawer_close">Закрыць навігацыйнае меню</string>
+    <string name="nav_header_title">Ваше імя</string>
+    <string name="nav_header_subtitle">email@gmail.com</string>
+    <string name="nav_header_desc">Навігацыйны загаловак</string>
+    <string name="action_settings">Налады</string>
+
+    <string name="menu_home">Галоўная</string>
+    <string name="menu_gallery">Галерэя</string>
+    <string name="menu_slideshow">Слайд-шоў</string>
+
+    <string name="enter_device_name">Увядзіце назву прылады:</string>
+    <string name="add">Дадаць</string>
+    <string name="cancel">Адмяніць</string>
+    <string name="device_name_exists">Назва прылады ўжо існуе</string>
+    <string name="device_name_empty">Назва прылады не можа быць пустой</string>
+    <string name="added_device">Дададзена: %1$s</string>
+    <string name="add_device">Дадаць прыладу</string>
+    <string name="home_page">Дамашняя старонка</string>
+    <string name="don_t_have_an_account">Не маеце ўліковага запісу?</string>
+    <string name="password">Пароль</string>
+    <string name="login">Увайсці</string>
+    <string name="email">Электронная пошта</string>
+    <string name="home">Дамашняя старонка</string>
+    <string name="register">Рэгістрацыя</string>
+</resources>
