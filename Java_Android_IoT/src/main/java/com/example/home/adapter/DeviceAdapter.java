@@ -1,6 +1,7 @@
 package com.example.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.home.DeviceDetailActivity;
 import com.example.home.R;
 import com.example.home.ui.device.Device;
 
@@ -35,6 +37,14 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         TextView textView = convertView.findViewById(R.id.device_name);
         textView.setText(device.getName());
+
+        // Добавление обработчика нажатия на элемент списка
+        convertView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DeviceDetailActivity.class);
+            intent.putExtra("device_name", device.getName());
+            intent.putExtra("device_type", device.getType()); // Передача типа устройства
+            context.startActivity(intent);
+        });
 
         return convertView;
     }

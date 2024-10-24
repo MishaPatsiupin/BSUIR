@@ -3,12 +3,20 @@ package com.example.home;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.gesture.Gesture;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
+import android.gesture.Prediction;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,8 +31,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.home.adapter.DeviceAdapter;
 import com.example.home.databinding.ActivityMainBinding;
 import com.example.home.ui.device.Device;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,9 +47,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "device_prefs";
     private static final String DEVICE_LIST_KEY = "device_list";
 
+    private GestureLibrary gestureLib;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.black));
+        }
 
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -77,6 +91,79 @@ public class MainActivity extends AppCompatActivity {
             showDeleteConfirmationDialog(position);
             return true;
         });
+
+        // Получаем текущего пользователя
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String email = currentUser.getEmail();
+
+            // Устанавливаем почту в TextView
+            TextView emailTextView = findViewById(R.id.textView);
+            if (emailTextView != null) {//почемуто нулл
+                emailTextView.setText(email);
+            }
+        }
+
+        GestureOverlayView gestureview = (GestureOverlayView) findViewById(R.id.gestures1);
+
+        gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures);
+        if (!gestureLib.load()) {
+            finish();
+        }
+
+        gestureview.addOnGesturePerformedListener(handleGestureListener);
+    }
+
+    private GestureOverlayView.OnGesturePerformedListener handleGestureListener = new GestureOverlayView.OnGesturePerformedListener() {
+        public void onGesturePerformed(GestureOverlayView gestureView,
+                                       Gesture gesture) {
+
+            ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+
+            if (predictions.size() > 0) {
+                Prediction prediction = predictions.get(0);
+                if (prediction.score > 5.0) {
+                    Toast.makeText(MainActivity.this,
+                            "Жэст : " + prediction.name,
+                            Toast.LENGTH_LONG).show();
+                    if (prediction.name.equals("ges_add")){
+                        addDevice();
+                    } else if (prediction.name.equals("ges_del")) {
+                        gesDevice();
+                    }
+                }
+            }
+
+        }
+    };
+
+    private void gesDevice() {
+        // Создаем EditText для ввода названия устройства
+        EditText deviceNameInput = new EditText(this);
+        deviceNameInput.setHint("назва");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Выдаленне прылады")
+                .setMessage("Каб выдаліць прыладу, увядзіце яе назву:")
+                .setView(deviceNameInput)
+                .setPositiveButton("Выдаліць", (dialog, which) -> {
+                    String deviceNameToDelete = deviceNameInput.getText().toString().trim();
+                    // Поиск устройства в списке
+                    boolean found = false;
+                    for (Device device : deviceList) {
+                        if (device.getName().equals(deviceNameToDelete)) {
+                            found = true;
+                            deleteDevice(deviceList.indexOf(device)); // Удаляем устройство
+                            Toast.makeText(this, "Прылада " + deviceNameToDelete + " выдалена", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        Toast.makeText(this, "Прылада з такой назвай не знойдзена", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Скасаванне", (dialog, which) -> dialog.cancel())
+                .show();
     }
 
     @Override
@@ -120,14 +207,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addDevice() {
+        // Создаем LinearLayout для размещения EditText
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
         EditText deviceNameInput = new EditText(this);
+        deviceNameInput.setHint(getString(R.string.enter_device_name));
+
+        EditText deviceTypeInput = new EditText(this);
+        deviceTypeInput.setHint(getString(R.string.enter_device_type));
+
+        layout.addView(deviceNameInput);
+        layout.addView(deviceTypeInput);
 
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.enter_device_name))
-                .setView(deviceNameInput)
+                .setTitle(getString(R.string.add_device)) // Заголовок диалога
+                .setView(layout)
                 .setPositiveButton(getString(R.string.add), (dialog, which) -> {
                     String newDeviceName = deviceNameInput.getText().toString().trim();
-                    if (!newDeviceName.isEmpty()) {
+                    String newDeviceType = deviceTypeInput.getText().toString().trim();
+
+                    if (!newDeviceName.isEmpty() && !newDeviceType.isEmpty()) {
                         boolean exists = false;
                         for (Device device : deviceList) {
                             if (device.getName().equals(newDeviceName)) {
@@ -139,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                         if (exists) {
                             Toast.makeText(this, getString(R.string.device_name_exists), Toast.LENGTH_SHORT).show();
                         } else {
-                            Device newDevice = new Device(newDeviceName);
+                            Device newDevice = new Device(newDeviceName, newDeviceType); // Предполагается, что конструктор Device принимает тип
                             deviceList.add(newDevice);
                             adapter.notifyDataSetChanged();
                             Toast.makeText(this, getString(R.string.added_device, newDeviceName), Toast.LENGTH_SHORT).show();

@@ -1,7 +1,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="12dp" />
-    <solid android:color="@color/green" /> <!-- основной цвет кнопки -->
-    <stroke android:width="1dp" android:color="@color/grey" /> <!-- цвет и толщина рамки -->
+    <solid android:color="#FFFFFF" /> <!-- основной цвет кнопки -->
+    <stroke android:width="1dp" android:color="@color/white" /> <!-- цвет и толщина рамки -->
     <padding
         android:left="16dp"
         android:right="16dp"

@@ -2,7 +2,7 @@
     <string name="app_name">дома</string>
     <string name="navigation_drawer_open">Адкрыць навігацыйнае меню</string>
     <string name="navigation_drawer_close">Закрыць навігацыйнае меню</string>
-    <string name="nav_header_title">Ваше імя</string>
+    <string name="nav_header_title">Ваша імя</string>
     <string name="nav_header_subtitle">email@gmail.com</string>
     <string name="nav_header_desc">Навігацыйны загаловак</string>
     <string name="action_settings">Налады</string>
@@ -25,4 +25,24 @@
     <string name="email">Электронная пошта</string>
     <string name="home">Дамашняя старонка</string>
     <string name="register">Рэгістрацыя</string>
+    <string name="user_email">hi</string>
+    <string name="enter_device_type">Увядзіце тып:</string>
+    <string name="status_pomp"><![CDATA[Стан паліву ->]]></string>
+    <string name="status_window"><![CDATA[Стан вентыляцыі ->]]></string>
+    <string name="moisture1_text"><![CDATA[Віль. грунту 1 ->]]></string>
+    <string name="moisture2_text"><![CDATA[Віль. грунту 2 ->]]></string>
+    <string name="temp_text"><![CDATA[Температура ->]]></string>
+    <string name="humidity_text"><![CDATA[Віль. паветра ->]]></string>
+    <string name="pressure_text"><![CDATA[Ціск ->]]></string>
+    <string name="liquid_sensor_water_text"><![CDATA[Жидкасць поліву ->]]></string>
+    <string name="liquid_sensor_plant_text"><![CDATA[Перелів ->]]></string>
+    <string name="time_text"><![CDATA[Час абнаўлення ->]]></string>
+    <string name="home_text">
+            ПМС.250503.Пацюпін\n<br/>
+            Інтэрнэт рэчаў. Мабільнае прыкладанне для сістэмы цяплічнага камбіната\n<br/><br/>
+            Ісходны код і дакументацыя: GitHub MishaPatsiupin\BSUIR\n<br/><br/>
+            Пацюпін Міхаіл Сяргеевіч\n<br/>
+            misha.bears.minsk@gmail.com
+    </string>
+    <string name="bytton_change">Зм.</string>
 </resources>

@@ -15,7 +15,6 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
         mText = new MutableLiveData<>();
-        mText.setValue(application.getString(R.string.home_page));
     }
 
     public LiveData<String> getText() {
