@@ -25,7 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -44,18 +43,20 @@ import java.util.Locale;
 
 public class DeviceDetailActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("moisture_data");
+    }
+
     private TextView deviceNameTextView, temperatureTextView, humidityTextView, updateTimeTextView, waterPumpTextView, windowTextView, moisture1TextView, moisture2TextView, liquid_sensor_waterTextView, liquid_sensor_plantTextView, pressureTextView;
     private Button buttonToggleWaterPump, buttonToggleVentilation;
     private Handler handler = new Handler();
     private Runnable runnable;
     private String deviceName;
-    private String deviceType; // Добавлено поле для типа устройства
+    private String deviceType;
     private RequestQueue requestQueue;
-    // Для графиков
     private LineChart lineChart;
-    private ArrayList<Entry> moisture1Data; // Для первой линии
-    private ArrayList<Entry> moisture2Data; // Для второй линии
-
+    private ArrayList<Entry> moisture1Data;
+    private ArrayList<Entry> moisture2Data;
     private GestureLibrary gestureLib;
 
     @Override
@@ -67,43 +68,32 @@ public class DeviceDetailActivity extends AppCompatActivity {
         }
 
         deviceName = getIntent().getStringExtra("device_name");
-        deviceType = getIntent().getStringExtra("device_type"); // Получаем тип устройства
+        deviceType = getIntent().getStringExtra("device_type");
 
         if (deviceName == null) {
             deviceName = "Unknown Device";
         }
         if (deviceType == null) {
-            deviceName = "tepliza";
+            deviceType = "tepliza";
         }
 
         deviceNameTextView = findViewById(R.id.textView3);
         deviceNameTextView.setText(deviceName);
 
-//        if (deviceType.equals("tepliza")) {
+        updateTimeTextView = findViewById(R.id.updateTimeTextView);
+        waterPumpTextView = findViewById(R.id.waterPumpTextView);
+        windowTextView = findViewById(R.id.windowTextView);
+        moisture1TextView = findViewById(R.id.moisture1TextView);
+        moisture2TextView = findViewById(R.id.moisture2TextView);
+        temperatureTextView = findViewById(R.id.temperatureTextView);
+        humidityTextView = findViewById(R.id.humidityTextView);
+        liquid_sensor_waterTextView = findViewById(R.id.liquid_sensor_waterTextView);
+        liquid_sensor_plantTextView = findViewById(R.id.liquid_sensor_plantTextView);
+        pressureTextView = findViewById(R.id.moisture2TextView);
 
-            updateTimeTextView = findViewById(R.id.updateTimeTextView);
-            waterPumpTextView = findViewById(R.id.waterPumpTextView);
-            windowTextView = findViewById(R.id.windowTextView);
-            moisture1TextView = findViewById(R.id.moisture1TextView);
-            moisture2TextView = findViewById(R.id.moisture2TextView);
-            temperatureTextView = findViewById(R.id.temperatureTextView);
-            humidityTextView = findViewById(R.id.humidityTextView);
-            liquid_sensor_waterTextView = findViewById(R.id.liquid_sensor_waterTextView);
-            liquid_sensor_plantTextView = findViewById(R.id.liquid_sensor_plantTextView);
-
-            // Инициализация графика
-            lineChart = findViewById(R.id.lineChart);
-            moisture1Data = new ArrayList<>();
-            moisture2Data = new ArrayList<>();
-//        } else if (deviceType.equals("gradka")) {
-//            lineChart = findViewById(R.id.lineChart);
-//
-//            updateTimeTextView = findViewById(R.id.updateTimeTextView);
-//            temperatureTextView = findViewById(R.id.temperatureTextView);
-//            humidityTextView = findViewById(R.id.humidityTextView);
-//            moisture1TextView = findViewById(R.id.moisture1TextView);
-            pressureTextView = findViewById(R.id.moisture2TextView);
-//        }
+        lineChart = findViewById(R.id.lineChart);
+        moisture1Data = new ArrayList<>();
+        moisture2Data = new ArrayList<>();
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -123,8 +113,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
             }
         });
 
-        GestureOverlayView gestureview = (GestureOverlayView) findViewById(R.id.gestures3);
-
+        GestureOverlayView gestureview = findViewById(R.id.gestures3);
         gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures);
         if (!gestureLib.load()) {
             finish();
@@ -134,23 +123,18 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private GestureOverlayView.OnGesturePerformedListener handleGestureListener = new GestureOverlayView.OnGesturePerformedListener() {
-        public void onGesturePerformed(GestureOverlayView gestureView,
-                                       Gesture gesture) {
-
+        public void onGesturePerformed(GestureOverlayView gestureView, Gesture gesture) {
             ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
-
             if (predictions.size() > 0) {
                 Prediction prediction = predictions.get(0);
                 if (prediction.score > 2.5) {
-                    if (prediction.name.equals("ges_export")){
+                    if (prediction.name.equals("ges_export")) {
                         exportData();
                     }
                 }
             }
-
         }
     };
-
 
     private void exportData() {
         StringBuilder exportData = new StringBuilder();
@@ -174,7 +158,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 exportData.append("Час абнаўлення: ").append(updateTimeTextView.getText().toString()).append("\n");
             }
 
-            // Захоўваем дадзеныя ў файл
             saveDataToFile(exportData.toString());
 
         } catch (Exception e) {
@@ -191,7 +174,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         File homeIoTDirectory = new File(directory, "home_iot");
 
         if (!homeIoTDirectory.exists()) {
-            boolean wasCreated = homeIoTDirectory.mkdirs(); // Ствараем папку, калі яна не існуе
+            boolean wasCreated = homeIoTDirectory.mkdirs();
         }
 
         File file = new File(homeIoTDirectory, fileName);
@@ -218,13 +201,13 @@ public class DeviceDetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        startDataUpdates(); // Начинаем обновление данных
+        startDataUpdates();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        handler.removeCallbacks(runnable); // Останавливаем обновление данных
+        handler.removeCallbacks(runnable);
     }
 
     private void startDataUpdates() {
@@ -232,14 +215,14 @@ public class DeviceDetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 fetchData();
-                handler.postDelayed(this, 2000); // обновление каждые 2 секунды
+                handler.postDelayed(this, 2000);
             }
         };
         handler.post(runnable);
     }
 
     private void fetchData() {
-        if(deviceType.equals("tepliza")) {
+        if (deviceType.equals("tepliza")) {
             fetchCurrentData();
             fetchStateData();
         } else if (deviceType.equals("gradka")) {
@@ -248,7 +231,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private void fetchCurrentData() {
-        String url = "http://192.168.150.43:5000/" + deviceType + "/data"; // URL для получения данных с типом устройства
+        String url = "http://192.168.43.23/" + deviceType + "/data";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -256,27 +239,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             if (deviceType.equals("tepliza")) {
-                                // Получаем массивы данных
-                                JSONArray moisture1Graf = response.getJSONArray("moisture1_graf");
-                                JSONArray moisture2Graf = response.getJSONArray("moisture2_graf");
-
-                                // Очищаем данные перед добавлением новых
-                                moisture1Data.clear();
-                                moisture2Data.clear();
-
-                                // Добавляем данные в график
-                                for (int i = 0; i < moisture1Graf.length(); i++) {
-                                    float moistureValue = (float) moisture1Graf.getDouble(i);
-                                    moisture1Data.add(new Entry(i, moistureValue));
-                                }
-
-                                for (int i = 0; i < moisture2Graf.length(); i++) {
-                                    float temperatureValue = (float) moisture2Graf.getDouble(i);
-                                    moisture2Data.add(new Entry(i, temperatureValue));
-                                }
-
-                                updateChart();
-
                                 String time = response.getString("this_time");
 
                                 String moisture1 = response.getString("moisture1");
@@ -306,6 +268,11 @@ public class DeviceDetailActivity extends AppCompatActivity {
                                 liquid_sensor_waterTextView.setText("Жидкасць поліву ->" + liquid_sensor_water);
                                 liquid_sensor_plantTextView.setText("Перелів ->" + liquid_sensor_plant);
 
+                                addMoisture1Data(Float.parseFloat(moisture1));
+                                addMoisture2Data(Float.parseFloat(moisture2));
+
+                                updateChart();
+
                             } else if (deviceType.equals("gradka")) {
                                 String time = response.getString("this_time");
 
@@ -313,7 +280,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
                                 String pressure = response.getString("pressure");
                                 String temperature = response.getString("temperature");
                                 String humidity = response.getString("humidity");
-
 
                                 updateTimeTextView.setText("Час абнаўлення ->" + time);
                                 moisture1TextView.setText("Віль. грунту 1 ->" + moisture1 + " %");
@@ -327,6 +293,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
                                 waterPumpTextView.setVisibility(View.GONE);
                                 buttonToggleVentilation.setVisibility(View.GONE);
                                 buttonToggleWaterPump.setVisibility(View.GONE);
+
+                                addMoisture1Data(Float.parseFloat(moisture1));
+
+                                updateChart();
                             }
 
                         } catch (JSONException e) {
@@ -347,7 +317,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private void fetchStateData() {
-        String url = "http://192.168.150.43:5000/" + deviceType + "/state"; // URL для получения состояния с типом устройства
+        String url = "http://192.168.43.23/" + deviceType + "/state";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -392,37 +362,32 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private void updateChart() {
-        LineDataSet moistureDataSet = new LineDataSet(moisture1Data, "Віль. грунту 1"); // Название линии 1
-        moistureDataSet.setColor(Color.BLUE);
-        moistureDataSet.setValueTextColor(Color.BLUE); // Цвет текста значений
+        LineDataSet moisture1DataSet = new LineDataSet(moisture1Data, "Віль. грунту 1");
+        moisture1DataSet.setColor(Color.BLUE);
+        moisture1DataSet.setValueTextColor(Color.BLUE);
 
-        LineDataSet temperatureDataSet = new LineDataSet(moisture2Data, "Віль. грунту 2"); // Название линии 2
-        temperatureDataSet.setColor(Color.RED);
-        temperatureDataSet.setValueTextColor(Color.RED); // Цвет текста значений
+        LineDataSet moisture2DataSet = new LineDataSet(moisture2Data, "Віль. грунту 2");
+        moisture2DataSet.setColor(Color.RED);
+        moisture2DataSet.setValueTextColor(Color.RED);
 
-        // Установка цвета фона для легенды
-        lineChart.getLegend().setEnabled(true); // Включение легенды
-        lineChart.getLegend().setWordWrapEnabled(true); // Автообтекание текста
-        lineChart.getLegend().setTextColor(Color.rgb(196, 196, 196)); // Цвет текста легенды
-        //lineChart.getLegend().setForm(Legend.LegendForm.LINE); // Форма легенды
-        lineChart.getDescription().setEnabled(false); // Отключить описание
-        LineData lineData = new LineData(moistureDataSet, temperatureDataSet);
+        LineData lineData = new LineData(moisture1DataSet, moisture2DataSet);
         lineChart.setData(lineData);
+
+        lineChart.getLegend().setEnabled(true);
+        lineChart.getLegend().setWordWrapEnabled(true);
+        lineChart.getLegend().setTextColor(Color.rgb(196, 196, 196));
+        lineChart.getDescription().setEnabled(false);
         lineChart.setBackgroundColor(Color.rgb(66, 66, 66));
-
-
-        lineChart.invalidate(); // Обновление графика
+        lineChart.invalidate(); // Refresh the chart
     }
 
     private void toggleWaterPump() {
-        String url = "http://192.168.150.43:5000/" + deviceType + "/set/pomp"; // URL для переключения состояния полива
-        // Получите текущее состояние полива
+        String url = "http://192.168.43.23/" + deviceType + "/set/pomp";
         boolean currentState = waterPumpTextView.getText().toString().contains("Уключана");
 
-        // Создание JSON для отправки на сервер
         JSONObject jsonBody = new JSONObject();
         try {
-            jsonBody.put("state", !currentState); // Переключаем состояние
+            jsonBody.put("state", !currentState);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -431,8 +396,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // Обработка ответа сервера
-                        fetchStateData(); // Обновление состояния после переключения
+                        fetchStateData();
                     }
                 },
                 new Response.ErrorListener() {
@@ -446,14 +410,12 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private void toggleVentilation() {
-        String url = "http://192.168.150.43:5000/" + deviceType + "/set/ventilation"; // URL для переключения состояния вентиляции
-        // Получите текущее состояние вентиляции
+        String url = "http://192.168.43.23/" + deviceType + "/set/ventilation";
         boolean currentState = windowTextView.getText().toString().contains("Адкрыта");
 
-        // Создание JSON для отправки на сервер
         JSONObject jsonBody = new JSONObject();
         try {
-            jsonBody.put("state", !currentState); // Переключаем состояние
+            jsonBody.put("state", !currentState);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -462,8 +424,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // Обработка ответа сервера
-                        fetchStateData(); // Обновление состояния после переключения
+                        fetchStateData();
                     }
                 },
                 new Response.ErrorListener() {
@@ -479,6 +440,41 @@ public class DeviceDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runnable); // Остановить обновление при уничтожении активности
+        handler.removeCallbacks(runnable);
     }
+
+    // Add these methods to the DeviceDetailActivity class
+
+    private void addMoisture1Data(float value) {
+        if (moisture1Data.size() >= 100) {
+            moisture1Data.clear();
+        }
+        moisture1Data.add(new Entry(moisture1Data.size(), value));
+        float[] data = new float[moisture1Data.size()];
+        for (int i = 0; i < moisture1Data.size(); i++) {
+            data[i] = moisture1Data.get(i).getY();
+        }
+        smoothData(data);
+        for (int i = 0; i < moisture1Data.size(); i++) {
+            moisture1Data.set(i, new Entry(i, data[i]));
+        }
+    }
+
+    private void addMoisture2Data(float value) {
+        if (moisture2Data.size() >= 100) {
+            moisture2Data.clear();
+        }
+        moisture2Data.add(new Entry(moisture2Data.size(), value));
+        float[] data = new float[moisture2Data.size()];
+        for (int i = 0; i < moisture2Data.size(); i++) {
+            data[i] = moisture2Data.get(i).getY();
+        }
+        smoothData(data);
+        for (int i = 0; i < moisture2Data.size(); i++) {
+            moisture2Data.set(i, new Entry(i, data[i]));
+        }
+    }
+
+    // Native method to smooth data
+    private native void smoothData(float[] data);
 }

@@ -30,6 +30,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+    ndkVersion '28.0.12433566 rc1'
 }
 
 dependencies {
@@ -42,7 +48,9 @@ dependencies {
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
     implementation libs.mediarouter
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation libs.gson
+    implementation libs.volley
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation libs.firebase.auth
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
