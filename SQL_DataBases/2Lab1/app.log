@@ -1,0 +1,10 @@
+2025-10-20 22:16:07,379 - INFO - Starting Flask application
+2025-10-20 22:16:08,880 - INFO - Starting Flask application
+2025-10-20 22:16:23,378 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:16:23,689 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-20 22:17:13,190 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:17:13,285 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-20 22:17:31,360 - INFO - Starting Flask application
+2025-10-20 22:17:33,275 - INFO - Starting Flask application
+2025-10-20 22:17:37,301 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:17:37,440 - INFO - User admin (role: admin) successfully retrieved 34 orders

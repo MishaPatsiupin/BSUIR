@@ -1,0 +1,68 @@
+2025-09-23 12:22:26,001 - INFO - Starting Flask application
+2025-09-23 12:22:27,638 - INFO - Starting Flask application
+2025-09-23 12:24:39,992 - INFO - Starting Flask application
+2025-09-23 12:24:47,346 - INFO - Starting Flask application
+2025-09-23 12:24:57,727 - INFO - Starting Flask application
+2025-09-23 12:25:54,202 - INFO - Starting Flask application
+2025-09-23 12:25:55,881 - INFO - Starting Flask application
+2025-09-23 14:13:39,365 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-09-23 14:13:39,566 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-09-23 14:17:36,888 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-09-23 14:17:36,966 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-09-23 14:27:17,802 - INFO - Starting Flask application
+2025-09-23 14:27:43,283 - INFO - Starting Flask application
+2025-09-23 14:28:00,101 - INFO - Starting Flask application
+2025-09-23 14:28:01,719 - INFO - Starting Flask application
+2025-09-23 14:29:24,806 - INFO - Starting Flask application
+2025-09-23 14:29:27,106 - INFO - Starting Flask application
+2025-10-20 22:18:24,016 - INFO - Starting Flask application
+2025-10-20 22:18:26,391 - INFO - Starting Flask application
+2025-10-20 22:18:28,487 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:18:28,627 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-20 22:23:44,015 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:23:44,119 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-20 22:25:24,650 - INFO - Starting Flask applicationer admin (role: admin) successfully retrieved
+2025-10-20 22:25:46,363 - INFO - Starting Flask application
+2025-10-20 22:25:48,353 - INFO - Starting Flask application
+2025-10-20 22:25:53,401 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:25:53,693 - INFO - Us 34 orders
+2025-10-20 22:26:16,544 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-20 22:26:16,679 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-20 22:31:30,482 - INFO - Starting Flask application
+2025-10-20 22:31:32,677 - INFO - Starting Flask application
+2025-10-21 13:44:53,818 - INFO - Starting Flask application
+2025-10-21 13:45:03,725 - INFO - Starting Flask application
+2025-10-21 14:06:12,426 - INFO - Starting Flask application
+2025-10-21 14:06:14,556 - INFO - Starting Flask application
+2025-10-21 14:07:56,642 - INFO - Starting Flask application
+2025-10-21 14:08:09,268 - INFO - Starting Flask application
+2025-10-21 14:11:28,975 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-21 14:11:29,101 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-21 14:11:46,401 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-21 14:11:46,513 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-21 14:12:38,815 - INFO - Starting Flask application
+2025-10-21 14:12:40,680 - INFO - Starting Flask application
+2025-10-21 14:13:08,229 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-21 14:13:08,321 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-21 14:23:15,734 - INFO - Starting Flask application
+2025-10-21 14:23:17,801 - INFO - Starting Flask application
+2025-10-21 14:24:22,900 - INFO - Starting Flask application
+2025-10-21 14:24:24,959 - INFO - Starting Flask application
+2025-10-21 14:27:09,111 - INFO - Starting Flask application
+2025-10-21 14:27:11,290 - INFO - Starting Flask application
+2025-10-21 14:27:14,043 - INFO - Starting Flask application
+2025-10-21 14:27:15,957 - INFO - Starting Flask application
+2025-10-21 14:28:06,861 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-21 14:28:06,946 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-21 14:31:56,701 - INFO - Starting Flask application
+2025-10-21 14:33:26,447 - INFO - Starting Flask application
+2025-10-21 14:33:29,903 - INFO - Starting Flask application
+2025-10-21 14:33:31,860 - INFO - Starting Flask application
+2025-10-21 14:33:51,756 - INFO - User admin (role: admin) accessed endpoint: GET /
+2025-10-21 14:33:51,842 - INFO - User admin (role: admin) successfully retrieved 34 orders
+2025-10-21 14:41:38,119 - INFO - Starting Flask application
+2025-10-21 14:41:41,322 - INFO - Starting Flask application
+2025-10-21 14:41:45,411 - INFO - Starting Flask application
+2025-10-21 14:41:49,836 - INFO - Starting Flask application
+2025-11-17 23:15:36,211 - INFO - Starting Flask application
+2025-11-17 23:15:37,300 - INFO - Starting Flask application

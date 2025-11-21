@@ -1,0 +1,167 @@
+{
+  "info": {
+    "_postman_id": "your-generated-uuid",
+    "name": "Lido API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "waiter1",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "waiter1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "waiter1",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "waiter1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"new\",\n  \"totalcost\": 250.5,\n  \"numberofguests\": 2,\n  \"orderdatetime\": \"2025-10-21T12:34:00\",\n  \"visitorid\": 1,\n  \"employeeid\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "orders"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Operations",
+      "item": [
+        {
+          "name": "Create Backup",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "manager1",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "manager1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"admin_password\": \"manager1\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin/backup",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "admin", "backup"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Queries",
+      "item": [
+        {
+          "name": "Execute Query",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "waiter1",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "waiter1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"SELECT * FROM public.\\\"Order\\\" LIMIT 5;\",\n  \"save_to_file\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/queries/execute",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "queries", "execute"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+Flask==2.3.3
+bsddb3==6.2.9
+flask-swagger-ui==4.11.1
+Flask-CORS==4.0.0

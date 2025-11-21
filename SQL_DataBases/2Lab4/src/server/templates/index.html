@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant DB Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .shortcut-hint {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .menu-bar {
+            background: #2c3e50;
+            color: white;
+            padding: 0.5rem 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background-color: #34495e;
+        }
+
+        .menu-item.active {
+            background-color: #3498db;
+        }
+
+        .menu-shortcut {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-left: 0.5rem;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .control-shortcut {
+            font-size: 0.7rem;
+            color: #666;
+            margin-left: 0.5rem;
+        }
+
+        select, input, button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .info {
+            background: #3498db;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+        }
+
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .shortcut-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1001;
+            max-width: 400px;
+        }
+
+        .shortcut-help h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .help-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .search-highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+
+        /* Стили для страницы справки */
+        .help-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .help-category {
+            margin-bottom: 2rem;
+        }
+
+        .help-category h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .shortcut-table th {
+            background: #34495e;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .shortcut-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .shortcut-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .shortcut-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .key-combination {
+            background: #2c3e50;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .mouse-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mouse-action {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Restaurant DB Admin</h1>
+        <div class="shortcut-hint">Use F1 for keyboard shortcuts help</div>
+    </div>
+
+    <div class="menu-bar">
+        <div class="menu-item" onclick="showSection('databases')">
+            Databases
+            <span class="menu-shortcut">Alt+D</span>
+        </div>
+        <div class="menu-item" onclick="showSection('operations')">
+            Operations
+            <span class="menu-shortcut">Alt+O</span>
+        </div>
+        <div class="menu-item" onclick="showSection('help')">
+            Keyboard Help
+            <span class="menu-shortcut">F1</span>
+        </div>
+	<div class="menu-item" onclick="openSwagger()">
+            API Documentation
+	</div>
+    </div>
+    <div class="container">
+        <!-- Databases Section -->
+        <div id="databases-section">
+            <div class="controls">
+                <div class="control-group">
+                    <select id="database-select" onchange="loadTableData()">
+                        <option value="">Select Database</option>
+                    </select>
+                    <span class="control-shortcut">Alt+1-9</span>
+                </div>
+                
+                <div class="control-group">
+                    <button onclick="showAddRecordModal()">
+                        Add Record
+                        <span class="control-shortcut">Ctrl+N</span>
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <button onclick="refreshData()">
+                        Refresh
+                        <span class="control-shortcut">F5</span>
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <input type="text" id="search-input" placeholder="Search..." onkeyup="filterTable()">
+                    <span class="control-shortcut">Ctrl+F</span>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="exportData()">
+                        Export
+                        <span class="control-shortcut">Ctrl+E</span>
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="clearSearch()">
+                        Clear Search
+                        <span class="control-shortcut">Esc</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="message-area"></div>
+
+            <div class="table-container">
+                <div id="table-content">
+                    <div class="loading">Select a database to view data</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operations Section -->
+        <div id="operations-section" style="display: none;">
+            <h2>Database Operations</h2>
+            <div class="controls">
+                <button onclick="showDatabaseInfo()">
+                    Show Database Info
+                    <span class="control-shortcut">Ctrl+I</span>
+                </button>
+                <button onclick="exportAllData()">
+                    Export All Data
+                    <span class="control-shortcut">Ctrl+Shift+E</span>
+                </button>
+                <button onclick="showStats()">
+                    Show Statistics
+                    <span class="control-shortcut">Ctrl+S</span>
+                </button>
+            </div>
+            <div id="operations-content"></div>
+        </div>
+
+        <!-- Help Section -->
+        <div id="help-section" style="display: none;">
+            <div class="help-section">
+                <h2>📋 Keyboard Shortcuts Reference</h2>
+                <p>Complete list of all available keyboard shortcuts and mouse actions in the application.</p>
+
+                <div class="help-category">
+                    <h3>🎯 Navigation & Sections</h3>
+                    <table class="shortcut-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Show Databases</td>
+                                <td><span class="key-combination">Alt + D</span></td>
+                                <td>Switch to Databases section</td>
+                            </tr>
+                            <tr>
+                                <td>Show Operations</td>
+                                <td><span class="key-combination">Alt + O</span></td>
+                                <td>Switch to Operations section</td>
+                            </tr>
+                            <tr>
+                                <td>Show Help</td>
+                                <td><span class="key-combination">F1</span></td>
+                                <td>Open this help page</td>
+                            </tr>
+                            <tr>
+                                <td>Quick Database Select</td>
+                                <td><span class="key-combination">Alt + 1</span> to <span class="key-combination">Alt + 9</span></td>
+                                <td>Quickly select first 9 databases</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-category">
+                    <h3>📊 Data Management</h3>
+                    <table class="shortcut-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Add New Record</td>
+                                <td><span class="key-combination">Ctrl + N</span></td>
+                                <td>Open add record dialog</td>
+                            </tr>
+                            <tr>
+                                <td>Refresh Data</td>
+                                <td><span class="key-combination">F5</span></td>
+                                <td>Reload current database</td>
+                            </tr>
+                            <tr>
+                                <td>Search</td>
+                                <td><span class="key-combination">Ctrl + F</span></td>
+                                <td>Focus search input field</td>
+                            </tr>
+                            <tr>
+                                <td>Clear Search</td>
+                                <td><span class="key-combination">Esc</span></td>
+                                <td>Clear search and show all records</td>
+                            </tr>
+                            <tr>
+                                <td>Export Current</td>
+                                <td><span class="key-combination">Ctrl + E</span></td>
+                                <td>Export current database to JSON</td>
+                            </tr>
+                            <tr>
+                                <td>Export All</td>
+                                <td><span class="key-combination">Ctrl + Shift + E</span></td>
+                                <td>Export all databases to JSON</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-category">
+                    <h3>ℹ️ Information & Tools</h3>
+                    <table class="shortcut-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Database Info</td>
+                                <td><span class="key-combination">Ctrl + I</span></td>
+                                <td>Show database information</td>
+                            </tr>
+                            <tr>
+                                <td>Show Statistics</td>
+                                <td><span class="key-combination">Ctrl + S</span></td>
+                                <td>Display database statistics</td>
+                            </tr>
+                            <tr>
+                                <td>Quick Help</td>
+                                <td><span class="key-combination">F1</span></td>
+                                <td>Toggle quick help panel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-category">
+                    <h3>📝 Forms & Modals</h3>
+                    <table class="shortcut-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Save Form</td>
+                                <td><span class="key-combination">Ctrl + S</span></td>
+                                <td>Save record in modal form</td>
+                            </tr>
+                            <tr>
+                                <td>Close Modal</td>
+                                <td><span class="key-combination">Esc</span></td>
+                                <td>Close any open modal dialog</td>
+                            </tr>
+                            <tr>
+                                <td>Next Field</td>
+                                <td><span class="key-combination">Tab</span></td>
+                                <td>Move to next form field</td>
+                            </tr>
+                            <tr>
+                                <td>Previous Field</td>
+                                <td><span class="key-combination">Shift + Tab</span></td>
+                                <td>Move to previous form field</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="help-category">
+                    <h3>🖱️ Mouse Actions</h3>
+                    <div class="mouse-actions">
+                        <div class="mouse-action">
+                            <strong>Double-click Row</strong>
+                            <p>Edit the clicked record</p>
+                        </div>
+                        <div class="mouse-action">
+                            <strong>Ctrl + Click Row</strong>
+                            <p>Delete the clicked record (with confirmation)</p>
+                        </div>
+                        <div class="mouse-action">
+                            <strong>Click Help Button (?)</strong>
+                            <p>Toggle quick help panel</p>
+                        </div>
+                        <div class="mouse-action">
+                            <strong>Hover over Buttons</strong>
+                            <p>See keyboard shortcut hints</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-category">
+                    <h3>💡 Tips & Best Practices</h3>
+                    <ul style="margin-left: 2rem; line-height: 1.6;">
+                        <li>Use <span class="key-combination">Alt + 1-9</span> for fastest database switching</li>
+                        <li>Press <span class="key-combination">F1</span> anytime to see this reference</li>
+                        <li>Double-click records for quick editing</li>
+                        <li>Use <span class="key-combination">Ctrl + F</span> then <span class="key-combination">Esc</span> for quick search and clear</li>
+                        <li>All shortcuts work in both Databases and Operations sections</li>
+                        <li>Form shortcuts only work when modal dialogs are open</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit Record -->
+    <div id="record-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Add Record</h3>
+            <form id="record-form">
+                <div id="form-fields"></div>
+                <div class="actions">
+                    <button type="submit">
+                        Save
+                        <span class="control-shortcut">Ctrl+S</span>
+                    </button>
+                    <button type="button" onclick="closeModal()">
+                        Cancel
+                        <span class="control-shortcut">Esc</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Help Panel -->
+    <button class="help-toggle" onclick="toggleQuickHelp()">?</button>
+    
+    <div class="shortcut-help" id="shortcut-help">
+        <h4>Quick Shortcuts</h4>
+        <div class="shortcut-item">
+            <span>Navigation</span>
+            <span>Alt+D/O/F1</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Add Record</span>
+            <span>Ctrl+N</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Search</span>
+            <span>Ctrl+F</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Refresh</span>
+            <span>F5</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Export</span>
+            <span>Ctrl+E</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Close/Clear</span>
+            <span>Esc</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Quick DB Select</span>
+            <span>Alt+1-9</span>
+        </div>
+        <div style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.8;">
+            Press F1 for complete reference
+        </div>
+    </div>
+
+    <script>
+        let currentTable = '';
+        let currentData = [];
+        let currentEditingKey = '';
+        let databasesList = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDatabases();
+            setupKeyboardShortcuts();
+        });
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Prevent default for all shortcuts
+                if (e.ctrlKey || e.altKey || e.key === 'F1' || e.key === 'F5') {
+                    e.preventDefault();
+                }
+
+                // Section navigation
+                if (e.altKey && e.key === 'd') {
+                    showSection('databases');
+                } else if (e.altKey && e.key === 'o') {
+                    showSection('operations');
+                } else if (e.key === 'F1') {
+                    showSection('help');
+                }
+
+                // Database quick selection (Alt+1 to Alt+9)
+                if (e.altKey && e.key >= '1' && e.key <= '9') {
+                    const index = parseInt(e.key) - 1;
+                    selectDatabaseByIndex(index);
+                }
+
+                // Common actions
+                if (e.ctrlKey && e.key === 'n') {
+                    showAddRecordModal();
+                } else if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('search-input').focus();
+                } else if (e.key === 'F5') {
+                    refreshData();
+                } else if (e.ctrlKey && e.key === 'e') {
+                    exportData();
+                } else if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+                    exportAllData();
+                } else if (e.ctrlKey && e.key === 'i') {
+                    showDatabaseInfo();
+                } else if (e.ctrlKey && e.key === 's') {
+                    if (document.getElementById('record-modal').style.display === 'block') {
+                        e.preventDefault();
+                        document.getElementById('record-form').dispatchEvent(new Event('submit'));
+                    } else {
+                        showStats();
+                    }
+                } else if (e.key === 'Escape') {
+                    if (document.getElementById('record-modal').style.display === 'block') {
+                        closeModal();
+                    } else {
+                        clearSearch();
+                    }
+                }
+            });
+
+            // Global click to close quick help
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.shortcut-help') && !e.target.closest('.help-toggle')) {
+                    document.getElementById('shortcut-help').style.display = 'none';
+                }
+            });
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('databases-section').style.display = 'none';
+            document.getElementById('operations-section').style.display = 'none';
+            document.getElementById('help-section').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(section + '-section').style.display = 'block';
+            
+            // Update active menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleQuickHelp() {
+            const help = document.getElementById('shortcut-help');
+            help.style.display = help.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectDatabaseByIndex(index) {
+            if (databasesList && databasesList[index]) {
+                const dbName = databasesList[index];
+                document.getElementById('database-select').value = dbName;
+                loadTableData();
+                showMessage(`Selected database: ${dbName}`, 'info');
+            }
+        }
+
+        async function loadDatabases() {
+            try {
+                const response = await fetch('/api/databases');
+                databasesList = await response.json();
+                
+                const select = document.getElementById('database-select');
+                select.innerHTML = '<option value="">Select Database</option>';
+                
+                databasesList.forEach((db, index) => {
+                    const option = document.createElement('option');
+                    option.value = db;
+                    option.textContent = `${db} ${index < 9 ? `(Alt+${index + 1})` : ''}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage('Error loading databases: ' + error.message, 'error');
+            }
+        }
+
+        async function loadTableData() {
+            const select = document.getElementById('database-select');
+            currentTable = select.value;
+            
+            if (!currentTable) {
+                document.getElementById('table-content').innerHTML = 
+                    '<div class="loading">Select a database to view data</div>';
+                return;
+            }
+
+            document.getElementById('table-content').innerHTML = 
+                '<div class="loading">Loading data...</div>';
+
+            try {
+                const response = await fetch(`/api/${currentTable}`);
+                currentData = await response.json();
+                
+                if (response.ok) {
+                    renderTable(currentData);
+                    showMessage(`Loaded ${currentData.length} records from ${currentTable}`, 'success');
+                } else {
+                    showMessage('Error loading data: ' + currentData.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error loading data: ' + error.message, 'error');
+            }
+        }
+
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                document.getElementById('table-content').innerHTML = 
+                    '<div class="loading">No data found</div>';
+                return;
+            }
+
+            // Get all unique keys from data
+            const headers = new Set();
+            data.forEach(row => {
+                Object.keys(row).forEach(key => {
+                    if (key !== '_key') headers.add(key);
+                });
+            });
+
+            const headerArray = ['_key', ...Array.from(headers), 'actions'];
+            
+            let html = `<table>
+                <thead>
+                    <tr>${headerArray.map(h => `<th>${h}</th>`).join('')}</tr>
+                </thead>
+                <tbody>`;
+
+            data.forEach(row => {
+                html += `<tr>`;
+                headerArray.forEach(header => {
+                    if (header === 'actions') {
+                        html += `<td class="actions">
+                            <button class="btn-edit" onclick="editRecord('${row._key}')" title="Edit record (Double-click row)">Edit</button>
+                            <button class="btn-delete" onclick="deleteRecord('${row._key}')" title="Delete record (Ctrl+Click)">Delete</button>
+                        </td>`;
+                    } else {
+                        const value = row[header];
+                        const displayValue = value !== undefined ? value : '';
+                        html += `<td ondblclick="editRecord('${row._key}')" onclick="handleRowClick(event, '${row._key}')">${displayValue}</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table>`;
+            document.getElementById('table-content').innerHTML = html;
+        }
+
+        function handleRowClick(event, key) {
+            if (event.ctrlKey) {
+                event.preventDefault();
+                deleteRecord(key);
+            }
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            if (!searchTerm) {
+                renderTable(currentData);
+                return;
+            }
+
+            const filteredData = currentData.filter(row => {
+                return Object.values(row).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+
+            // Highlight search term in results
+            const highlightedData = filteredData.map(row => {
+                const newRow = {...row};
+                Object.keys(newRow).forEach(key => {
+                    if (typeof newRow[key] === 'string') {
+                        newRow[key] = newRow[key].replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="search-highlight">${match}</span>`
+                        );
+                    }
+                });
+                return newRow;
+            });
+
+            renderTable(highlightedData);
+        }
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            renderTable(currentData);
+            showMessage('Search cleared', 'info');
+        }
+
+        function refreshData() {
+            if (currentTable) {
+                loadTableData();
+                showMessage('Data refreshed', 'info');
+            } else {
+                showMessage('Please select a database first', 'error');
+            }
+        }
+	function openSwagger() {
+	    window.open('/api/docs', '_blank');
+	}
+        function showAddRecordModal() {
+            if (!currentTable) {
+                showMessage('Please select a database first', 'error');
+                return;
+            }
+
+            currentEditingKey = '';
+            document.getElementById('modal-title').textContent = `Add Record to ${currentTable}`;
+            document.getElementById('form-fields').innerHTML = '<div class="loading">Loading form...</div>';
+            document.getElementById('record-modal').style.display = 'block';
+            
+            // Generate form fields based on first record's structure
+            if (currentData.length > 0) {
+                generateFormFields(currentData[0]);
+            } else {
+                generateBasicForm();
+            }
+
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.querySelector('#form-fields input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        function generateFormFields(sampleRecord) {
+            let html = '';
+            for (const [key, value] of Object.entries(sampleRecord)) {
+                if (key === '_key') continue;
+                
+                html += `
+                <div class="form-group">
+                    <label for="field-${key}">${key}</label>
+                    <input type="text" id="field-${key}" name="${key}" 
+                           value="${currentEditingKey ? (sampleRecord[key] || '') : ''}"
+                           placeholder="Enter ${key}">
+                </div>`;
+            }
+            document.getElementById('form-fields').innerHTML = html;
+        }
+
+        function generateBasicForm() {
+            document.getElementById('form-fields').innerHTML = `
+                <div class="form-group">
+                    <label>Note: No sample data available. Manual field creation required.</label>
+                    <input type="text" placeholder="Enter data as JSON">
+                </div>`;
+        }
+
+        async function editRecord(key) {
+            try {
+                const response = await fetch(`/api/${currentTable}/${key}`);
+                const record = await response.json();
+                
+                if (response.ok) {
+                    currentEditingKey = key;
+                    document.getElementById('modal-title').textContent = `Edit Record in ${currentTable}`;
+                    document.getElementById('form-fields').innerHTML = '<div class="loading">Loading form...</div>';
+                    document.getElementById('record-modal').style.display = 'block';
+                    
+                    generateFormFields(record);
+                    
+                    // Fill form with current values
+                    for (const [field, value] of Object.entries(record)) {
+                        if (field === '_key') continue;
+                        const input = document.getElementById(`field-${field}`);
+                        if (input) input.value = value || '';
+                    }
+
+                    // Focus first input
+                    setTimeout(() => {
+                        const firstInput = document.querySelector('#form-fields input');
+                        if (firstInput) firstInput.focus();
+                    }, 100);
+                } else {
+                    showMessage('Error loading record: ' + record.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error loading record: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteRecord(key) {
+            if (!confirm('Are you sure you want to delete this record?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/${currentTable}/${key}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Record deleted successfully', 'success');
+                    loadTableData();
+                } else {
+                    showMessage('Error deleting record: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error deleting record: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('record-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                if (value.trim() !== '') {
+                    data[key] = value;
+                }
+            });
+
+            try {
+                let response;
+                if (currentEditingKey) {
+                    // Update existing record
+                    response = await fetch(`/api/${currentTable}/${currentEditingKey}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // Create new record
+                    response = await fetch(`/api/${currentTable}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage(
+                        currentEditingKey ? 'Record updated successfully' : 'Record created successfully', 
+                        'success'
+                    );
+                    closeModal();
+                    loadTableData();
+                } else {
+                    showMessage('Error saving record: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error saving record: ' + error.message, 'error');
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('record-modal').style.display = 'none';
+            document.getElementById('record-form').reset();
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('message-area');
+            messageArea.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+
+        // Operations section functions
+        async function showDatabaseInfo() {
+            const content = document.getElementById('operations-content');
+            content.innerHTML = '<div class="loading">Loading database info...</div>';
+            
+            try {
+                const response = await fetch('/api/databases');
+                const databases = await response.json();
+                
+                let html = '<h3>Available Databases</h3><ul>';
+                databases.forEach((db, index) => {
+                    html += `<li><strong>${db}</strong> ${index < 9 ? `- Quick select: Alt+${index + 1}` : ''}</li>`;
+                });
+                html += '</ul>';
+                
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function showStats() {
+            const content = document.getElementById('operations-content');
+            content.innerHTML = '<div class="loading">Loading statistics...</div>';
+            
+            try {
+                let statsHtml = '<h3>Database Statistics</h3><ul>';
+                
+                for (const db of databasesList) {
+                    const response = await fetch(`/api/${db}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        statsHtml += `<li><strong>${db}:</strong> ${data.length} records</li>`;
+                    }
+                }
+                
+                statsHtml += '</ul>';
+                content.innerHTML = statsHtml;
+            } catch (error) {
+                content.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function exportData() {
+            if (!currentTable) {
+                showMessage('Please select a database first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/${currentTable}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${currentTable}_export.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showMessage(`Data exported from ${currentTable}`, 'success');
+                } else {
+                    showMessage('Error exporting data: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error exporting data: ' + error.message, 'error');
+            }
+        }
+
+        async function exportAllData() {
+            try {
+                let allData = {};
+                
+                for (const db of databasesList) {
+                    const response = await fetch(`/api/${db}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        allData[db] = data;
+                    }
+                }
+                
+                const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'all_databases_export.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                showMessage('All databases exported successfully', 'success');
+            } catch (error) {
+                showMessage('Error exporting all data: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

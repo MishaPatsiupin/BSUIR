@@ -1,0 +1,415 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Restaurant DB API",
+    "description": "REST API для работы с Berkeley DB базами данных ресторана. Позволяет выполнять CRUD операции над всеми таблицами базы данных.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "url": "http://localhost:5000/api/docs"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "Databases",
+      "description": "Операции со списком баз данных"
+    },
+    {
+      "name": "Data",
+      "description": "CRUD операции с данными"
+    },
+    {
+      "name": "System",
+      "description": "Системные endpoints"
+    }
+  ],
+  "paths": {
+    "/databases": {
+      "get": {
+        "tags": [
+          "Databases"
+        ],
+        "summary": "Получить список доступных баз данных",
+        "description": "Возвращает массив с названиями всех доступных баз данных Berkeley DB",
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "Order",
+                "dish",
+                "employee",
+                "visitor"
+              ]
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/{table_name}": {
+      "get": {
+        "tags": [
+          "Data"
+        ],
+        "summary": "Получить все записи из таблицы",
+        "description": "Возвращает все записи из указанной таблицы Berkeley DB",
+        "parameters": [
+          {
+            "name": "table_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Order",
+              "dish",
+              "dishingredient",
+              "employee",
+              "employeeposition",
+              "ingredient",
+              "orderdish",
+              "position",
+              "supplier",
+              "visitor"
+            ],
+            "description": "Название таблицы (базы данных)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "404": {
+            "description": "Таблица не найдена",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Data"
+        ],
+        "summary": "Создать новую запись",
+        "description": "Создает новую запись в указанной таблице",
+        "parameters": [
+          {
+            "name": "table_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Order",
+              "dish",
+              "dishingredient",
+              "employee",
+              "employeeposition",
+              "ingredient",
+              "orderdish",
+              "position",
+              "supplier",
+              "visitor"
+            ],
+            "description": "Название таблицы"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "example": {
+                "name": "New Record",
+                "value": "Example Value"
+              }
+            },
+            "description": "Данные для создания записи"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запись успешно создана",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "key": {
+                  "type": "string",
+                  "description": "Ключ созданной записи"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверные данные",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Таблица не найдена",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/{table_name}/{key}": {
+      "get": {
+        "tags": [
+          "Data"
+        ],
+        "summary": "Получить запись по ключу",
+        "description": "Возвращает конкретную запись по её ключу",
+        "parameters": [
+          {
+            "name": "table_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Order",
+              "dish",
+              "dishingredient",
+              "employee",
+              "employeeposition",
+              "ingredient",
+              "orderdish",
+              "position",
+              "supplier",
+              "visitor"
+            ],
+            "description": "Название таблицы"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Ключ записи"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "404": {
+            "description": "Запись не найдена",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Data"
+        ],
+        "summary": "Обновить запись",
+        "description": "Обновляет существующую запись по ключу",
+        "parameters": [
+          {
+            "name": "table_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Название таблицы"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Ключ записи"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Новые данные записи"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запись успешно обновлена",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          },
+          "404": {
+            "description": "Запись не найдена",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Data"
+        ],
+        "summary": "Удалить запись",
+        "description": "Удаляет запись по ключу",
+        "parameters": [
+          {
+            "name": "table_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Название таблицы"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Ключ записи"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запись успешно удалена",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          },
+          "404": {
+            "description": "Запись не найдена",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Ошибка сервера",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Проверка здоровья API",
+        "description": "Возвращает статус работы API",
+        "responses": {
+          "200": {
+            "description": "API работает нормально",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "healthy"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "Описание ошибки"
+        }
+      },
+      "required": [
+        "error"
+      ]
+    },
+    "Success": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Статус операции"
+        }
+      },
+      "required": [
+        "success"
+      ]
+    }
+  }
+}

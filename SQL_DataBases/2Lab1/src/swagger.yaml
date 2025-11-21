@@ -1,0 +1,363 @@
+openapi: 2.0
+info:
+  title: Lido API
+  description: API для работы с базой данных столовой Lido. Маршруты реализованы в src/routes.py. Аутентификация — HTTP Basic (см. src/auth.py). Примеры пользователей - waiter1/waiter1 (role user), manager1/manager1 (role admin).
+  version: "1.0.0"
+servers:
+  - url: http://localhost:5000
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Order:
+      type: object
+      properties:
+        orderid:
+          type: integer
+        status:
+          type: string
+        totalcost:
+          type: number
+        numberofguests:
+          type: integer
+        orderdatetime:
+          type: string
+          format: date-time
+        visitorid:
+          type: integer
+        employeeid:
+          type: integer
+    Dish:
+      type: object
+      properties:
+        dishid:
+          type: integer
+        name:
+          type: string
+        weight:
+          type: number
+        nutritionalvalue:
+          type: string
+        cost:
+          type: number
+        category:
+          type: string
+    DishIngredient:
+      type: object
+      properties:
+        dishid:
+          type: integer
+        ingredientid:
+          type: integer
+        quantity:
+          type: number
+    Employee:
+      type: object
+      properties:
+        employeeid:
+          type: integer
+        fullname:
+          type: string
+        phonenumber:
+          type: string
+        email:
+          type: string
+        hiredate:
+          type: string
+          format: date
+        contractenddate:
+          type: string
+          format: date
+    EmployeePosition:
+      type: object
+      properties:
+        employeeid:
+          type: integer
+        positionid:
+          type: integer
+    Ingredient:
+      type: object
+      properties:
+        ingredientid:
+          type: integer
+        name:
+          type: string
+        unitofmeasurement:
+          type: string
+        instock:
+          type: number
+        expirationdate:
+          type: string
+          format: date
+        supplierid:
+          type: integer
+    OrderDish:
+      type: object
+      properties:
+        orderid:
+          type: integer
+        dishid:
+          type: integer
+        count:
+          type: integer
+    Position:
+      type: object
+      properties:
+        positionid:
+          type: integer
+        name:
+          type: string
+        salary:
+          type: number
+        workschedule:
+          type: string
+        responsibilities:
+          type: string
+    Supplier:
+      type: object
+      properties:
+        supplierid:
+          type: integer
+        companyname:
+          type: string
+        contactinformation:
+          type: string
+        reliabilityrating:
+          type: number
+        productcategory:
+          type: string
+    Visitor:
+      type: object
+      properties:
+        visitorid:
+          type: integer
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        phonenumber:
+          type: string
+        preferences:
+          type: string
+    QueryExecuteRequest:
+      type: object
+      properties:
+        query:
+          type: string
+        save_to_file:
+          type: boolean
+      required:
+        - query
+    BackupRequest:
+      type: object
+      properties:
+        admin_password:
+          type: string
+      required:
+        - admin_password
+security:
+  - basicAuth: []
+paths:
+  /:
+    get:
+      summary: Список всех заказов (корневой эндпоинт)
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Список заказов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Ошибка при получении
+  /api/orders/:
+    get:
+      summary: Получить список заказов (фильтры через query params)
+      security:
+        - basicAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Фильтрация по статусу (ILIKE)
+        - in: query
+          name: numberofguests
+          schema:
+            type: integer
+        - in: query
+          name: orderdatetime
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список заказов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Создать заказ
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Заказ создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /api/orders/{id}:
+    get:
+      summary: Получить заказ по id
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заказ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Not found
+    put:
+      summary: Обновить заказ по id
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Обновлённый заказ
+        '404':
+          description: Not found
+    delete:
+      summary: Удалить заказ по id
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Удалённая сущность
+        '404':
+          description: Not found
+
+  # Аналогично для справочных и остальных таблиц (dishes, dishingredient, employee, employeeposition,
+  # ingredient, orderdish, position, supplier, visitor). Ниже — примеры для dishes и queries/admin.
+
+  /api/dishes/:
+    get:
+      summary: Получить список блюд (справочная таблица)
+      security:
+        - basicAuth: []
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список блюд
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+    post:
+      summary: Создать блюдо (требуется admin)
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+      responses:
+        '201':
+          description: Блюдо создано
+        '403':
+          description: Только admin может модифицировать справочные таблицы
+
+  /api/queries/execute:
+    post:
+      summary: Выполнить произвольный SQL-запрос
+      description: Выполняется запрос на уровне роли текущего пользователя. Если save_to_file=true, возвращает файл JSON.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryExecuteRequest'
+      responses:
+        '200':
+          description: Результат запроса (JSON) или файл
+        '400':
+          description: Ошибка выполнения запроса
+
+  /api/admin/backup:
+    post:
+      summary: Cоздать бэкап базы (только admin)
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupRequest'
+      responses:
+        '200':
+          description: SQL-дамп возвращается как attachment
+        '401':
+          description: Неверный пароль администратора
+        '403':
+          description: Только admin может создавать бэкап
+        '500':
+          description: Ошибка создания бэкапа
+
+tags:
+  - name: orders
+  - name: dishes
+  - name: queries
+  - name: admin
