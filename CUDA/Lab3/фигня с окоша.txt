@@ -1,0 +1,29 @@
+import subprocess
+import os
+
+# Шаг 1: Проверить nvcc
+print("Проверка nvcc:")
+p = subprocess.Popen('nvcc --version', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+for line in p.stdout.readlines():
+    print(line.decode("utf-8"))
+retval = p.wait()
+print(f"nvcc exited with code: {retval}\n")
+
+# Шаг 3: Скомпилировать
+print("Компиляция:")
+compile_cmd = ['nvcc', '-arch=sm_75', '-o', 'a.out', 'cuda_matrix.cu']
+result = subprocess.run(compile_cmd, capture_output=True, text=True)
+print(result.stdout)
+if result.stderr:
+    print("Ошибки компиляции:", result.stderr)
+print(f"Компиляция exited with code: {result.returncode}\n")
+
+# Шаг 4: Запустить
+print("Запуск:")
+if os.path.exists('a.out') and result.returncode == 0:
+    run_result = subprocess.run('./a.out', capture_output=True, text=True, shell=True)
+    print(run_result.stdout)
+    if run_result.stderr:
+        print("Ошибки запуска:", run_result.stderr)
+else:
+    print("Ошибка: a.out не скомпилирован! Проверь GPU.")

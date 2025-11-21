@@ -1,0 +1,247 @@
+#include <bits/stdc++.h>
+#include <cuda_runtime.h>
+
+using namespace std;
+
+const int LEN = 2048 * 16;  // Общая длина в байтах, кратна 16 (для AES-блоков по 16 байт)
+const int BLOCK_SIZE = 16;  // Размер одного AES-блока (4x4 матрица байт)
+const int NUM_BLOCKS = LEN / BLOCK_SIZE;  // Сколько блоков обрабатываем (параллельно на GPU!)
+
+// Умножение в поле GF(2^8) — нужно для MixColumns (это как специальное умножение с XOR вместо +)
+__device__ __host__ uint8_t gf_mul(uint8_t a, uint8_t b) {
+    uint8_t p = 0;  // Начинаем с 0, результат будет XOR'ом
+    while (a && b) {  // Пока не дошли до нуля
+        if (b & 1) p ^= a;  // Если младший бит b = 1, XOR с a (как сложение в поле)
+        bool hi_bit = (a & 0x80) != 0;  // Проверяем, сдвинулся ли бит за 8-й (переполнение)
+        a = (a << 1) & 0xFF;  // Удваиваем a (сдвиг влево), обрезаем до 8 бит
+        if (hi_bit) a ^= 0x1B;  // Если переполнение, XOR с 0x1B (это полином поля AES: x^8 + x^4 + x^3 + x + 1)
+        b >>= 1;  // Делим b на 2 (сдвиг вправо)
+    }
+    return p;  // Возвращаем результат
+}
+
+// ShiftRows: сдвигаем строки матрицы влево (как в AES, но без S-box для простоты)
+__device__ __host__ void shift_rows(uint8_t* state) {
+    uint8_t temp[16];  // Временный массив, чтобы не портить данные на лету
+    memcpy(temp, state, 16);  // Копируем весь блок
+
+    // Строка 0 (первые 4 байта): без сдвига — остаётся как есть
+    for (int j = 0; j < 4; ++j) state[j] = temp[j];
+
+    // Строка 1 (байты 4-7): сдвиг влево на 1 позицию (циклически)
+    for (int j = 0; j < 4; ++j) state[4 + j] = temp[4 + (j + 1) % 4];
+
+    // Строка 2 (8-11): на 2 позиции
+    for (int j = 0; j < 4; ++j) state[8 + j] = temp[8 + (j + 2) % 4];
+
+    // Строка 3 (12-15): на 3 позиции (или эквивалентно вправо на 1)
+    for (int j = 0; j < 4; ++j) state[12 + j] = temp[12 + (j + 3) % 4];
+}
+
+// MixColumns: смешиваем каждый столбец (4 столбца в блоке) — это диффузия, чтобы изменения распространялись
+__device__ __host__ void mix_columns(uint8_t* state) {
+    uint8_t temp[16];  // Опять буфер
+    memcpy(temp, state, 16);  // Копируем
+
+    for (int col = 0; col < 4; ++col) {  // Перебираем 4 столбца (каждый — 4 байта вертикально)
+        int base = col * 4;  // Индекс начала столбца: 0,4,8,12
+        uint8_t in0 = temp[base + 0];  // Верхний байт столбца
+        uint8_t in1 = temp[base + 1];
+        uint8_t in2 = temp[base + 2];
+        uint8_t in3 = temp[base + 3];  // Нижний
+
+        // Формулы из AES: новая строка = комбинация старых с умножениями и XOR
+        // 0x02 и 0x03 — коэффициенты матрицы AES
+        state[base + 0] = gf_mul(0x02, in0) ^ gf_mul(0x03, in1) ^ in2 ^ in3;  // Новая in0
+        state[base + 1] = in0 ^ gf_mul(0x02, in1) ^ gf_mul(0x03, in2) ^ in3;  // Новая in1
+        state[base + 2] = in0 ^ in1 ^ gf_mul(0x02, in2) ^ gf_mul(0x03, in3); // Новая in2
+        state[base + 3] = gf_mul(0x03, in0) ^ in1 ^ in2 ^ gf_mul(0x02, in3); // Новая in3
+    }
+}
+
+// CPU-версия: обрабатываем все блоки последовательно (для сравнения с GPU)
+void process_cpu(vector<uint8_t>& data, int num_blocks) {
+    for (int b = 0; b < num_blocks; ++b) {  // Цикл по всем AES-блокам
+        uint8_t state[16];  // Локальный буфер для текущего блока
+        memcpy(state, data.data() + b * BLOCK_SIZE, BLOCK_SIZE);  // Загружаем 16 байт
+
+        // 4 раунда: ShiftRows + MixColumns (без SubBytes, чтобы после 4 вернулось к оригиналу!)
+        for (int round = 0; round < 4; ++round) {
+            shift_rows(state);  // Сдвигаем строки
+            mix_columns(state);  // Смешиваем столбцы
+        }
+
+        memcpy(data.data() + b * BLOCK_SIZE, state, BLOCK_SIZE);  // Сохраняем результат обратно
+    }
+}
+
+// GPU-kernel: каждый блок GPU обрабатывает один AES-блок (параллельно!)
+__global__ void aes_operations(const uint8_t* in, uint8_t* out, int num_blocks) {
+    int block_id = blockIdx.x;  // ID текущего блока (от 0 до NUM_BLOCKS-1)
+    if (block_id >= num_blocks) return;  // Если за пределами — выходим
+
+    if (threadIdx.x == 0) {  // Только первый thread в блоке работает (просто, без лишнего)
+        uint8_t state[16];  // Локальный state
+        for (int i = 0; i < BLOCK_SIZE; ++i) {  // Копируем из входа
+            state[i] = in[block_id * BLOCK_SIZE + i];
+        }
+
+        // Те же 4 раунда
+        for (int round = 0; round < 4; ++round) {
+            shift_rows(state);
+            mix_columns(state);
+        }
+
+        // Копируем в выход
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            out[block_id * BLOCK_SIZE + i] = state[i];
+        }
+    }
+}
+
+int main() {
+    // Выделяем память на хосте (CPU)
+    vector<uint8_t> h_in(LEN);  // Исходная случайная строка байт
+    vector<uint8_t> h_out_cpu(LEN);  // Результат CPU
+    vector<uint8_t> h_out_gpu(LEN);  // Результат GPU
+
+    // Генерим рандомные байты (0-255), seed=42 чтобы всегда одинаково
+    mt19937 gen(42);  // Генератор
+    uniform_int_distribution<uint8_t> dis(0, 255);  // Равномерно от 0 до 255
+    for (auto& x : h_in) {
+        x = dis(gen);
+    }
+    h_out_cpu = h_in;  // Копируем для CPU-обработки
+
+    // Замеряем время CPU
+    auto cpu_start = chrono::high_resolution_clock::now();  // Старт
+    process_cpu(h_out_cpu, NUM_BLOCKS);  // Запуск
+    auto cpu_end = chrono::high_resolution_clock::now();  // Финиш
+    double cpu_time_ms = chrono::duration<double, milli>(cpu_end - cpu_start).count();  // В миллисекундах
+
+    // GPU: выделяем память на устройстве
+    uint8_t *d_in, *d_out;  // Указатели на GPU-память
+    cudaMalloc(&d_in, LEN * sizeof(uint8_t));  // Выделяем для входа
+    cudaMalloc(&d_out, LEN * sizeof(uint8_t));  // Для выхода
+    cudaMemcpy(d_in, h_in.data(), LEN * sizeof(uint8_t), cudaMemcpyHostToDevice);  // Копируем на GPU
+
+    // Замеряем время GPU (с cudaEvent для точности)
+    cudaEvent_t gpu_start, gpu_stop;
+    cudaEventCreate(&gpu_start);
+    cudaEventCreate(&gpu_stop);
+    cudaEventRecord(gpu_start);  // Старт
+
+    // Запуск kernel: grid = NUM_BLOCKS (по одному блоку на AES-блок), block=1 thread
+    dim3 block(1);  // Один thread в блоке
+    dim3 grid(NUM_BLOCKS);  // Столько блоков, сколько AES-блоков
+    aes_operations<<<grid, block>>>(d_in, d_out, NUM_BLOCKS);  // <<<grid, block>>> — магия CUDA!
+
+    cudaEventRecord(gpu_stop);  // Финиш
+    cudaEventSynchronize(gpu_stop);  // Ждём завершения
+    float gpu_time_ms_f;
+    cudaEventElapsedTime(&gpu_time_ms_f, gpu_start, gpu_stop);  // Время в мс
+    double gpu_time_ms = gpu_time_ms_f;
+
+    // Копируем результат с GPU обратно
+    cudaMemcpy(h_out_gpu.data(), d_out, LEN * sizeof(uint8_t), cudaMemcpyDeviceToHost);
+
+    // Освобождаем GPU-память
+    cudaFree(d_in);
+    cudaFree(d_out);
+    cudaEventDestroy(gpu_start);
+    cudaEventDestroy(gpu_stop);
+
+    // Проверяем: CPU-результат == GPU-результат?
+    bool match = true;
+    int diff_count = 0;
+    for (int k = 0; k < LEN; ++k) {
+        if (h_out_cpu[k] != h_out_gpu[k]) {  // Точное сравнение байт
+            match = false;
+            diff_count++;
+            if (diff_count <= 5) {  // Показываем первые 5 различий
+                cout << "Различие в позиции " << k << ": CPU=" << (int)h_out_cpu[k] 
+                     << ", GPU=" << (int)h_out_gpu[k] << endl;
+            }
+        }
+    }
+
+    // Проверяем возврат к оригиналу (после 4 раундов должно быть то же!)
+    bool back_to_orig = true;
+    for (int k = 0; k < LEN; ++k) {
+        if (h_out_cpu[k] != h_in[k]) {
+            back_to_orig = false;
+            break;
+        }
+    }
+
+    // Выводим результаты
+    cout << "CPU==GPU: " << (match ? "Yes" : "No") << endl;
+    if (!match) {
+        cout << "Количество различий: " << diff_count << endl;
+    }
+    cout << "Back to original: " << (back_to_orig ? "Yes" : "No") << endl;
+    cout << "CPU time: " << fixed << setprecision(4) << cpu_time_ms << " ms" << endl;
+    cout << "GPU time: " << fixed << setprecision(4) << gpu_time_ms << " ms" << endl;
+    if (gpu_time_ms > 0) {
+        cout << "GPU speedup: " << fixed << setprecision(2) << (cpu_time_ms / gpu_time_ms) << "x" << endl;
+    }
+    cout << endl;
+
+    // Сохраняем в файлы для отладки (каждые 16 байт — новая строка)
+    cout << "Сохранение в файлы..." << endl;
+    remove("input.txt");  // Удаляем старые
+    remove("cpu_output.txt");
+    remove("gpu_output.txt");
+
+    // Input
+    ofstream input_file("input.txt");
+    for (int i = 0; i < LEN; ++i) {
+        if (i % 16 == 0 && i > 0) input_file << endl;  // Новая строка после блока
+        input_file << setw(4) << (int)h_in[i];  // Выводим как int (0-255)
+    }
+    input_file.close();
+    cout << "Input saved to input.txt" << endl;
+
+    // CPU output
+    ofstream cpu_file("cpu_output.txt");
+    for (int i = 0; i < LEN; ++i) {
+        if (i % 16 == 0 && i > 0) cpu_file << endl;
+        cpu_file << setw(4) << (int)h_out_cpu[i];
+    }
+    cpu_file.close();
+    cout << "CPU output saved to cpu_output.txt" << endl;
+
+    // GPU output
+    ofstream gpu_file("gpu_output.txt");
+    for (int i = 0; i < LEN; ++i) {
+        if (i % 16 == 0 && i > 0) gpu_file << endl;
+        gpu_file << setw(4) << (int)h_out_gpu[i];
+    }
+    gpu_file.close();
+    cout << "GPU output saved to gpu_output.txt" << endl;
+    cout << endl;
+
+    // Показываем фрагмент (первые 16 байт) для визуальной проверки
+    cout << "Input fragment (first 16 bytes):" << endl;
+    for (int j = 0; j < 16; ++j) {
+        cout << setw(4) << fixed << setprecision(0) << (int)h_in[j];
+    }
+    cout << endl << endl;
+
+    cout << "CPU output fragment (first 16 bytes):" << endl;
+    for (int j = 0; j < 16; ++j) {
+        cout << setw(4) << fixed << setprecision(0) << (int)h_out_cpu[j];
+    }
+    cout << endl << endl;
+
+    cout << "GPU output fragment (first 16 bytes):" << endl;
+    for (int j = 0; j < 16; ++j) {
+        cout << setw(4) << fixed << setprecision(0) << (int)h_out_gpu[j];
+    }
+    cout << endl;
+
+    cout << "Note: Без S-box — линейные операции, после 4 раундов возвращаемся к оригиналу!" << endl;
+    // Можно поэкспериментировать: увеличить LEN для большего speedup, или добавить больше раундов
+
+    return 0;
+}
